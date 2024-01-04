@@ -21,6 +21,10 @@
   <ItemGroup>
     <ClCompile Include="..\..\src\WinMain.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\WndExce.hpp" />
+    <ClInclude Include="..\..\src\WndProc.hpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>

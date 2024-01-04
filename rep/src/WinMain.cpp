@@ -1,22 +1,5 @@
-#include"windows.h"
-
-LRESULT CALLBACK WndProcUpdate(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
-{
-	switch (message)
-	{
-		case WM_CREATE:
-			break;
-
-		case WM_DESTROY:
-			PostQuitMessage(0);
-			break;
-
-		default:
-			return DefWindowProc(hWnd, message, wParam, lParam);
-	}
-
-	return 0;
-}
+#include"WndExce.hpp"
+#include"WndProc.hpp"
 
 // the correct entry WinMain
 int WINAPI WinMain(
@@ -26,12 +9,10 @@ int WINAPI WinMain(
 	_In_     int       nCmdShow)
 {
 	// Create window class
-
 	WNDCLASSEX wcex;
-
 	wcex.cbSize = sizeof(WNDCLASSEX);
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = WndProcUpdate; // message handler
+	wcex.lpfnWndProc = WndProc; // message handler
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = hInstance;
@@ -41,26 +22,12 @@ int WINAPI WinMain(
 	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = TEXT("Test class WNDCLASSEX");
 	wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
-
-	if (!RegisterClassEx(&wcex))
-	{
-		MessageBox(
-			NULL,
-			TEXT("RegisterClassEx failed!"),
-			TEXT("Exception"),
-			NULL);
-
-		return 1;
-	}
-
-
+	WndExce(!RegisterClassEx(&wcex), TEXT("RegisterClassEx failed!"));
 
 	// Create main window
-	// https://learn.microsoft.com/en-us/previous-versions/ms960010(v=msdn.10)
-
-	HWND hWndMain = CreateWindowEx(
+	HWND hWnd = CreateWindowEx(
 		WS_EX_LEFT,
-		TEXT("Test class WNDCLASSEX"),
+		wcex.lpszClassName,
 		TEXT("Empty window"),
 		WS_VISIBLE | WS_SYSMENU, 
 		CW_USEDEFAULT,
@@ -71,22 +38,10 @@ int WINAPI WinMain(
 		NULL,
 		hInstance,
 		NULL);
+	WndExce(!hWnd, TEXT("RegisterClassEx failed!"));
 
-	if (!hWndMain)
-	{
-		MessageBox(
-			NULL,
-			TEXT("CreateWindowEx failed!"),
-			TEXT("Exception"),
-			NULL);
-
-		return 1;
-	}
-
-
-
-	// infinite cycle
-	MSG message;
+	// Main loop window 
+	MSG message{};
 	while (GetMessage(&message, NULL, 0, 0))
 	{
 		TranslateMessage(&message);
