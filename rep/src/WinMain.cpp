@@ -18,7 +18,7 @@ int WINAPI WinMain(
 	wcex.hInstance = hInstance;
 	wcex.hIcon = LoadIcon(wcex.hInstance, IDI_APPLICATION);
 	wcex.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.hbrBackground = (HBRUSH)(COLOR_DESKTOP);
 	wcex.lpszMenuName = NULL;
 	wcex.lpszClassName = TEXT("Test class WNDCLASSEX");
 	wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);

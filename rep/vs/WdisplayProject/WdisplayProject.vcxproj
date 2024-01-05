@@ -22,6 +22,7 @@
     <ClCompile Include="..\..\src\WinMain.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\src\CreateWidgets.hpp" />
     <ClInclude Include="..\..\src\WndExce.hpp" />
     <ClInclude Include="..\..\src\WndProc.hpp" />
   </ItemGroup>
