@@ -1,48 +1,51 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Исходные файлы">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Файлы заголовков">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
     <Filter Include="Файлы ресурсов">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Файлы заголовков\wm">
+    <Filter Include="Windows">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Windows\wm">
       <UniqueIdentifier>{92d43fe3-2499-4b93-beb3-2f7a2958f360}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков\wnd">
+    <Filter Include="Windows\wnd">
       <UniqueIdentifier>{9de03abc-0c39-4208-a7b0-12832c7e7574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entry">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\entry.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="..\..\src\Entry\console.cpp">
+      <Filter>Entry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\wm\WmList.hpp">
-      <Filter>Файлы заголовков\wm</Filter>
+    <ClInclude Include="..\..\src\Windows\wm\WmList.hpp">
+      <Filter>Windows\wm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\wm\WmProc.hpp">
-      <Filter>Файлы заголовков\wm</Filter>
+    <ClInclude Include="..\..\src\Windows\wm\WmProc.hpp">
+      <Filter>Windows\wm</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\wnd\WndExce.hpp">
-      <Filter>Файлы заголовков\wnd</Filter>
+    <ClInclude Include="..\..\src\Windows\wnd\WndExce.hpp">
+      <Filter>Windows\wnd</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\wnd\WndProc.hpp">
-      <Filter>Файлы заголовков\wnd</Filter>
+    <ClInclude Include="..\..\src\Windows\wnd\WndGlob.hpp">
+      <Filter>Windows\wnd</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\wnd\WndWidg.hpp">
-      <Filter>Файлы заголовков\wnd</Filter>
+    <ClInclude Include="..\..\src\Windows\wnd\WndProc.hpp">
+      <Filter>Windows\wnd</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\wnd\WndGlob.hpp">
-      <Filter>Файлы заголовков\wnd</Filter>
+    <ClInclude Include="..\..\src\Windows\wnd\WndWidg.hpp">
+      <Filter>Windows\wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\WinEntry.hpp">
+      <Filter>Windows</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
