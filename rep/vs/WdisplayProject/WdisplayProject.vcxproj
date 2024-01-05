@@ -25,6 +25,7 @@
     <ClInclude Include="..\..\src\wm\WmList.hpp" />
     <ClInclude Include="..\..\src\wm\WmProc.hpp" />
     <ClInclude Include="..\..\src\wnd\WndExce.hpp" />
+    <ClInclude Include="..\..\src\wnd\WndGlob.hpp" />
     <ClInclude Include="..\..\src\wnd\WndProc.hpp" />
     <ClInclude Include="..\..\src\wnd\WndWidg.hpp" />
   </ItemGroup>

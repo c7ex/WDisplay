@@ -38,7 +38,7 @@ int WINAPI WinMain(
 		NULL,
 		hInstance,
 		NULL);
-	WndExce(!hWnd, TEXT("RegisterClassEx failed!"));
+	WndExce(!hWnd, TEXT("CreateWindowEx failed!"));
 
 	// Main loop window 
 	MSG message{};

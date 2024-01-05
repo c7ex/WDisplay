@@ -41,5 +41,8 @@
     <ClInclude Include="..\..\src\wnd\WndWidg.hpp">
       <Filter>Файлы заголовков\wnd</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\wnd\WndGlob.hpp">
+      <Filter>Файлы заголовков\wnd</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

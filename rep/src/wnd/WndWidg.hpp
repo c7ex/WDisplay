@@ -4,7 +4,7 @@
 // create widgets in main window
 void CreateWidgets(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	HWND hButton = CreateWindow(
+	hButton = CreateWindow(
 		TEXT("BUTTON"),
 		TEXT("Button"),
 		WS_VISIBLE | WS_CHILD | ES_CENTER,
@@ -15,7 +15,7 @@ void CreateWidgets(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		nullptr,
 		nullptr);
 
-	HWND hLable = CreateWindow(
+	hLable = CreateWindow(
 		TEXT("static"),
 		TEXT("Lable"),
 		WS_VISIBLE | WS_CHILD | ES_CENTER,
