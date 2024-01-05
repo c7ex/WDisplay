@@ -1,5 +1,5 @@
 #pragma once
-#include"windows.h"
+#include"WmProc.hpp"
 
 // create widgets in main window
 void CreateWidgets(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -11,7 +11,7 @@ void CreateWidgets(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		10, 10,
 		100, 20,
 		hWnd,
-		nullptr,
+		(HMENU)WM_COMMAND_BUTTON,
 		nullptr,
 		nullptr);
 

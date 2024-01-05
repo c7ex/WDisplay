@@ -1,0 +1,1 @@
+#define WM_COMMAND_BUTTON 0
