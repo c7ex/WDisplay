@@ -7,7 +7,9 @@ int       arg_nCmdShow;
 
 int main()
 {
-	WinMain(
+	Display display;
+	display.updateString("string");
+	display.WinMain(
 		arg_hInstance,
 		arg_hPrevInstance,
 		arg_lpCmdLine,

@@ -1,6 +1,10 @@
 #pragma once
 #include"windows.h"
+#include"string"
 
-// all widgets
+// Widgets for create form
 HWND hButton;
 HWND hLable;
+
+// Data for Display
+std::string str;
