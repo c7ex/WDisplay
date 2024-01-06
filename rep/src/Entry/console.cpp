@@ -14,4 +14,6 @@ int main()
 		arg_hPrevInstance,
 		arg_lpCmdLine,
 		arg_nCmdShow);
+
+	return 0;
 }

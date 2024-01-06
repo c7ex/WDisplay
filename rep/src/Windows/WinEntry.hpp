@@ -1,8 +1,8 @@
 #pragma once
 /*
-*            __ WinEntry __ 
-*           |             |
-*        WndExce       WndProc __
+*           __ WinEntry __ 
+*          |              |
+*       WndExce        WndProc __
 *                                |
 *                             WndWidg __
 *                                       |
@@ -34,6 +34,11 @@ public:
 		_In_     LPSTR     lpCmdLine,
 		_In_     int       nCmdShow)
 	{
+		// Initialize GDI+.
+		GdiplusStartupInput gdiplusStartupInput;
+		ULONG_PTR           gdiplusToken;
+		GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
+
 		// Create window class
 		WNDCLASSEX wcex;
 		wcex.cbSize = sizeof(WNDCLASSEX);
@@ -74,6 +79,7 @@ public:
 			DispatchMessage(&message);
 		}
 
+		GdiplusShutdown(gdiplusToken);
 		return 0;
 	}
 
