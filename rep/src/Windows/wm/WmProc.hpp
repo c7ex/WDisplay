@@ -1,7 +1,7 @@
 #pragma once
 #include"WmList.hpp"
 
-// WM_COMMAND handler
+// event handler
 LRESULT WmProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (wParam)

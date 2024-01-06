@@ -1,4 +1,4 @@
-#include"WinEntry.hpp"
+﻿#include"WinEntry.hpp"
 
 HINSTANCE arg_hInstance;
 HINSTANCE arg_hPrevInstance;
@@ -8,7 +8,7 @@ int       arg_nCmdShow;
 int main()
 {
 	Display display;
-	display.updateString("string");
+	display.updateString("hello");
 	display.WinMain(
 		arg_hInstance,
 		arg_hPrevInstance,

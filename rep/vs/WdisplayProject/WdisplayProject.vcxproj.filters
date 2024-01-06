@@ -47,5 +47,8 @@
     <ClInclude Include="..\..\src\Windows\WinEntry.hpp">
       <Filter>Windows</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Windows\wm\WmPaint.hpp">
+      <Filter>Windows\wm</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

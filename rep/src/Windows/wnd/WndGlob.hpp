@@ -6,8 +6,5 @@
 HWND hButton;
 HWND hLable;
 
-HDC          hdc;
-PAINTSTRUCT  ps;
-
 // Data for Display
 std::string str;

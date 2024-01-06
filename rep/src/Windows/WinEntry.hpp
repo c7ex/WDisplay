@@ -1,25 +1,25 @@
 #pragma once
 /*
-*           __ WinEntry __ 
-*          |              |
-*       WndExce        WndProc __
-*                                |
-*                             WndWidg __
-*                                       |
-*                                     WmProc __
-*                                              |
-*                                           WmList __
-*                                                    |
-*                                              __ WndGlob __
-*                                             |             |
-*                                          windows        string
-* 
-*                                     ===============================
-*                                    |                               |
-*                                    |   *Widgets for create form*   |
-*                                    |      *Data for Display*       |
-*                                    |                               |
-*                                     ===============================
+*                __ WinEntry __ 
+*               |              |
+*         __ WndExce        WndProc __
+*        |                            |
+*     windows                   __ WndWidg __
+*                              |             |
+*                        __ WmPaint        WmProc __
+*                       |                           |
+*                    gdiplus                     WmList __
+*                                                         |
+*                                                   __ WndGlob __
+*                                                  |             |
+*                                               windows        string
+*
+*                                          ===============================
+*                                         |                               |
+*                                         |   *Widgets for create form*   |
+*                                         |      *Data for Display*       |
+*                                         |                               |
+*                                          ===============================
 */ 
 #include"WndExce.hpp"
 #include"WndProc.hpp"

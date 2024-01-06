@@ -1,5 +1,6 @@
 #pragma once
 #include"WmProc.hpp"
+#include"WmPaint.hpp"
 
 // create widgets in main window
 void CreateWidgets(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

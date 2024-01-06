@@ -24,6 +24,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Windows\WinEntry.hpp" />
     <ClInclude Include="..\..\src\Windows\wm\WmList.hpp" />
+    <ClInclude Include="..\..\src\Windows\wm\WmPaint.hpp" />
     <ClInclude Include="..\..\src\Windows\wm\WmProc.hpp" />
     <ClInclude Include="..\..\src\Windows\wnd\WndExce.hpp" />
     <ClInclude Include="..\..\src\Windows\wnd\WndGlob.hpp" />
