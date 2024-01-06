@@ -7,4 +7,3 @@ HWND hButton;
 HWND hLable;
 
 // Data for Display
-std::string str;

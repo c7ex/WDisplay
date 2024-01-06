@@ -40,8 +40,7 @@ public:
 		GdiplusStartup(&gdiplusToken, &gdiplusStartupInput, NULL);
 
 		// Create window class
-		WNDCLASSEX wcex;
-		wcex.cbSize = sizeof(WNDCLASSEX);
+		WNDCLASSEX wcex{ sizeof(WNDCLASSEX) };
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
 		wcex.lpfnWndProc = WndProc; // message handler
 		wcex.cbClsExtra = 0;
@@ -60,14 +59,14 @@ public:
 			WS_EX_LEFT,
 			wcex.lpszClassName,
 			TEXT("Empty window"),
-			WS_VISIBLE | WS_SYSMENU,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
-			CW_USEDEFAULT,
+			WS_VISIBLE | WS_OVERLAPPEDWINDOW,
+			10,
+			10,
+			400,
+			400,
 			NULL,
 			NULL,
-			hInstance,
+			wcex.hInstance,
 			NULL);
 		WndExce(!hWnd, TEXT("CreateWindowEx failed!"));
 
@@ -81,10 +80,5 @@ public:
 
 		GdiplusShutdown(gdiplusToken);
 		return 0;
-	}
-
-	void updateString(std::string newstr)
-	{
-		str = newstr;
 	}
 };

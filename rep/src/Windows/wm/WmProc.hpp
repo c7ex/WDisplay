@@ -8,7 +8,7 @@ LRESULT WmProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		case WM_COMMAND_BUTTON:
 		{
-			SetWindowTextA(hLable, (str.c_str()));
+			SetWindowTextA(hLable, "Lable");
 			return static_cast<LRESULT>(0);
 		}
 
