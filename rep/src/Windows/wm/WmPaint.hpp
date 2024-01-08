@@ -4,45 +4,29 @@ using namespace Gdiplus;
 
 HDC          hdc;
 PAINTSTRUCT  ps;
+RECT         rt;
 
 Color mainOutline(100, 0, 0, 0);
-Color mainBackground(255, 141, 231, 237);
-
-void PaintRectangle(Graphics& graphics, const Color& penColor, float widthPen, const Color& brushColor, RECT rect)
-{
-	Pen pen(penColor, 3);
-	SolidBrush solidBrush(brushColor);
-	RectF rectangle(
-		0, 0, 
-		static_cast<float>(rect.right - rect.left - 17),
-		static_cast<float>(rect.bottom - rect.top - 40));
-	graphics.FillRectangle(&solidBrush, rectangle);
-	graphics.DrawRectangle(&pen, rectangle);
-}
-
-void PaintRectangle(Graphics& graphics, const Color& penColor, float widthPen, const Color& brushColor, float x, float y, float width, float heigh)
-{
-	Pen pen(penColor, 3);
-	SolidBrush solidBrush(brushColor);
-	RectF rectangle(x, y, width, heigh);
-	graphics.FillRectangle(&solidBrush, rectangle);
-	graphics.DrawRectangle(&pen, rectangle);
-}
+Color mainBackground(55, 141, 231, 237);
 
 // graphic handler
 LRESULT WmPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	RECT clientRect;
-	GetWindowRect(hWnd, &clientRect);
+	GetWindowRect(hWnd, &rt);
+	int x_pos_end = (rt.right - rt.left) - 17;
+	int y_pos_end = (rt.bottom - rt.top) - 40;
+
 	hdc = BeginPaint(hWnd, &ps);
-	
-	Graphics graphics(hdc);
-	PaintRectangle(
-		graphics, 
-		mainOutline,
-		3.0f,
-		mainBackground,
-		clientRect);
+	HGDIOBJ pen = SelectObject(hdc, GetStockObject(BLACK_PEN));
+	HGDIOBJ brush = SelectObject(hdc, GetStockObject(SYSTEM_FONT));
+
+	// Paint background
+	Rectangle(hdc, 1, 2, x_pos_end, y_pos_end);
+
+	SelectObject(hdc, pen);
+	SelectObject(hdc, brush);
+	DeleteObject(pen);
+	DeleteObject(brush);
 
 	EndPaint(hWnd, &ps);
 	return static_cast<LRESULT>(0);
