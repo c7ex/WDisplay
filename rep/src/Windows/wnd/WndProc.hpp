@@ -4,6 +4,8 @@
 // message handler
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+
+
 	switch (message)
 	{
 		case WM_CREATE:
@@ -16,6 +18,13 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			PostQuitMessage(0);
 			return static_cast<LRESULT>(0);
+		}
+
+		case WM_MOUSEMOVE:
+		{
+			xPos = LOWORD(lParam);
+			yPos = HIWORD(lParam);
+			InvalidateRect(hWnd, NULL, true);
 		}
 
 		case WM_PAINT: // graphics
