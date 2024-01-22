@@ -36,15 +36,38 @@ LRESULT WmPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		Rectangle(hMemDc, 0, 0, x_pos_end, y_pos_end);
 
+		SelectObject(hMemDc, pen);
+		DeleteObject(pen);
+
+		SelectObject(hMemDc, brush);
+		DeleteObject(brush);
+
+
+		// Paint axis
+
+		int x_pos_axis = (x_pos_end/2 + shift_x) * scale;
+		int y_pos_axis = (y_pos_end/2 + shift_y) * scale;
+
+		SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(AXIS_PEN));
+
+		MoveToEx(hMemDc, 0, y_pos_axis, NULL);
+		LineTo(hMemDc, x_pos_end, y_pos_axis);
+
+		MoveToEx(hMemDc, x_pos_axis, 0, NULL);
+		LineTo(hMemDc, x_pos_axis, y_pos_end);
+
+
 		// Paint test picture
+		SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(TEST_OBJ_PEN));
 
 		Rectangle(hMemDc,
-			10 + shift_x, 
-			10 + shift_y,
-			20 + shift_x, 
-			20 + shift_y);
+			(10 + shift_x) * scale, 
+			(10 + shift_y) * scale,
+			(20 + shift_x) * scale,
+			(20 + shift_y) * scale);
 
-		// Paint mouse position
+
+		// Paint text mouse position
 		std::wstring x_ps_message = L"x(" + std::to_wstring(xPos) + L")";
 		std::wstring y_ps_message = L"y(" + std::to_wstring(yPos) + L")";
 
@@ -61,18 +84,12 @@ LRESULT WmPaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		TextOut(hMemDc, 10, y_pos_end - 15, x_sh_message.c_str(), x_sh_message.size());
 		TextOut(hMemDc, 50, y_pos_end - 15, y_sh_message.c_str(), y_sh_message.size());
 
-			//delete objects
-			SelectObject(hMemDc, pen);
-			DeleteObject(pen);
 
-			SelectObject(hMemDc, brush);
-			DeleteObject(brush);
+	SelectObject(hMemDc, hFont);
+	DeleteObject(hFont);
 
-			SelectObject(hMemDc, hFont);
-			DeleteObject(hFont);
-
-			SelectObject(hMemDc, hTmp);
-			DeleteObject(hTmp);
+	SelectObject(hMemDc, hTmp);
+	DeleteObject(hTmp);
 
 	BitBlt(hdc, 0, 0, GetDeviceCaps(hdc, HORZRES), GetDeviceCaps(hdc, VERTRES), hMemDc, 0, 0, SRCCOPY);
 
