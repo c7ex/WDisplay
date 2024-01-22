@@ -24,12 +24,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		{
 			xPos = LOWORD(lParam);
 			yPos = HIWORD(lParam);
-			InvalidateRect(hWnd, NULL, true);
 		}
 
 		case WM_PAINT: // graphics
 		{
 			return WmPaint(hWnd, message, wParam, lParam);
+		}
+
+		case WM_TIMER:
+		{
+			InvalidateRect(hWnd, NULL, FALSE);
 		}
 
 		case WM_COMMAND: // events

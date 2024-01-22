@@ -70,6 +70,9 @@ public:
 			NULL);
 		WndExce(!hWnd, TEXT("CreateWindowEx failed!"));
 
+		// Create General Timer
+		SetTimer(hWnd, ID_SENIOR_TIMER, INTERVAL_TIMER, NULL);
+		
 		// Main loop window 
 		MSG message{};
 		while (GetMessage(&message, NULL, 0, 0))
@@ -77,6 +80,9 @@ public:
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 		}
+
+		// Delete General Timer
+		KillTimer(hWnd, ID_SENIOR_TIMER);
 
 		GdiplusShutdown(gdiplusToken);
 		return 0;
