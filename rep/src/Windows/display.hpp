@@ -1,28 +1,37 @@
-#pragma once
 /*
-*                __ WinEntry __ 
-*               |              |
-*         __ WndExce        WndProc __
-*        |                            |
-*     windows                   __ WndWidg __
-*                              |             |
-*                        __ WmPaint        WmProc __
-*                       |                           |
-*                    gdiplus                     WmList __
-*                                                         |
-*                                                   __ WndGlob __
-*                                                  |             |
-*                                               windows        string
-*
-*                                          ===============================
-*                                         |                               |
-*                                         |   *Widgets for create form*   |
-*                                         |      *Data for Display*       |
-*                                         |                               |
-*                                          ===============================
-*/ 
-#include"WndExce.hpp"
-#include"WndProc.hpp"
+ *                  ____ display ____ 
+ *              windows     |        |
+ *                       gdiplus     |
+ *                             __ mainloop __
+ *                       __ paint            |
+ *                  __ core                  |
+ *              string                       |
+ *                                     __ guitool
+ *                                  events
+ */
+
+#pragma once
+#include<windows.h>
+#include<gdiplus.h>
+
+#pragma comment (lib, "Gdiplus.lib")
+using namespace Gdiplus;
+
+#include"mloop.hpp"
+
+ // check on exception
+void WndExce(bool condition, LPCWSTR exceptionText)
+{
+	if (condition)
+	{
+		MessageBox(
+			NULL,
+			exceptionText,
+			TEXT("Exception"),
+			NULL);
+		PostQuitMessage(0);
+	}
+}
 
 class Display
 {
@@ -42,7 +51,7 @@ public:
 		// Create window class
 		WNDCLASSEX wcex{ sizeof(WNDCLASSEX) };
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc = WndProc; // message handler
+		wcex.lpfnWndProc = mloop; // message handler
 		wcex.cbClsExtra = 0;
 		wcex.cbWndExtra = 0;
 		wcex.hInstance = hInstance;
@@ -71,7 +80,7 @@ public:
 		WndExce(!hWnd, TEXT("CreateWindowEx failed!"));
 
 		// Create General Timer
-		SetTimer(hWnd, ID_SENIOR_TIMER, INTERVAL_TIMER, NULL);
+		SetTimer(hWnd, SENIOR_TIMER, INTERVAL_TIMER, NULL);
 		
 		// Main loop window 
 		MSG message{};
@@ -82,7 +91,7 @@ public:
 		}
 
 		// Delete General Timer
-		KillTimer(hWnd, ID_SENIOR_TIMER);
+		KillTimer(hWnd, SENIOR_TIMER);
 
 		GdiplusShutdown(gdiplusToken);
 		return 0;

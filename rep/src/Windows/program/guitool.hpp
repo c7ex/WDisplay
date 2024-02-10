@@ -1,8 +1,7 @@
 #pragma once
-#include"WmProc.hpp"
-#include"WmPaint.hpp"
+#include"events.hpp"
 
-// create widgets in main window
+// WIDGETS
 void CreateWidgets(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	//hLable = CreateWindow(

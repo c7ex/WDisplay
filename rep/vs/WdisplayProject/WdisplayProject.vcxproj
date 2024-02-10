@@ -22,14 +22,12 @@
     <ClCompile Include="..\..\src\Entry\console.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\Windows\WinEntry.hpp" />
-    <ClInclude Include="..\..\src\Windows\wm\WmList.hpp" />
-    <ClInclude Include="..\..\src\Windows\wm\WmPaint.hpp" />
-    <ClInclude Include="..\..\src\Windows\wm\WmProc.hpp" />
-    <ClInclude Include="..\..\src\Windows\wnd\WndExce.hpp" />
-    <ClInclude Include="..\..\src\Windows\wnd\WndGlob.hpp" />
-    <ClInclude Include="..\..\src\Windows\wnd\WndProc.hpp" />
-    <ClInclude Include="..\..\src\Windows\wnd\WndWidg.hpp" />
+    <ClInclude Include="..\..\src\Windows\display.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\core\core.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\events.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\guitool.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\mloop.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\paint.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -123,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\src\Entry;..\..\src\Windows;..\..\src\Windows\wnd;..\..\src\Windows\wm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\Entry;..\..\src\Windows;..\..\src\Windows\program\;..\..\src\Windows\program\core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,7 +137,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\src\Entry;..\..\src\Windows;..\..\src\Windows\wnd;..\..\src\Windows\wm;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\Entry;..\..\src\Windows;..\..\src\Windows\program\;..\..\src\Windows\program\core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

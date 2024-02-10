@@ -1,5 +1,5 @@
 ﻿#include"iostream"
-#include"WinEntry.hpp"
+#include"display.hpp"
 
 HINSTANCE arg_hInstance;
 HINSTANCE arg_hPrevInstance;

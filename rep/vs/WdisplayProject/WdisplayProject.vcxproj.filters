@@ -9,15 +9,15 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Windows\wm">
-      <UniqueIdentifier>{92d43fe3-2499-4b93-beb3-2f7a2958f360}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Windows\wnd">
-      <UniqueIdentifier>{9de03abc-0c39-4208-a7b0-12832c7e7574}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Entry">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Windows\program">
+      <UniqueIdentifier>{6b39b16a-3f69-479e-8752-f8381d2de6c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Windows\program\core">
+      <UniqueIdentifier>{eb5bb8cf-bc34-47ca-84a2-35d9e3b733dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -26,29 +26,23 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\Windows\wm\WmList.hpp">
-      <Filter>Windows\wm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\wm\WmProc.hpp">
-      <Filter>Windows\wm</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\wnd\WndExce.hpp">
-      <Filter>Windows\wnd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\wnd\WndGlob.hpp">
-      <Filter>Windows\wnd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\wnd\WndProc.hpp">
-      <Filter>Windows\wnd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\wnd\WndWidg.hpp">
-      <Filter>Windows\wnd</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\WinEntry.hpp">
+    <ClInclude Include="..\..\src\Windows\display.hpp">
       <Filter>Windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\wm\WmPaint.hpp">
-      <Filter>Windows\wm</Filter>
+    <ClInclude Include="..\..\src\Windows\program\paint.hpp">
+      <Filter>Windows\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\core.hpp">
+      <Filter>Windows\program\core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\events.hpp">
+      <Filter>Windows\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\guitool.hpp">
+      <Filter>Windows\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\mloop.hpp">
+      <Filter>Windows\program</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
