@@ -19,6 +19,12 @@
     <Filter Include="Windows\program\core">
       <UniqueIdentifier>{eb5bb8cf-bc34-47ca-84a2-35d9e3b733dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Windows\program\core\global">
+      <UniqueIdentifier>{bcfc5c8d-acd7-403c-bd70-5f92b242e330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Windows\program\core\methods">
+      <UniqueIdentifier>{839b5af4-4b72-4101-aebf-792fc27344f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Entry\console.cpp">
@@ -38,11 +44,44 @@
     <ClInclude Include="..\..\src\Windows\program\events.hpp">
       <Filter>Windows\program</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\guitool.hpp">
+    <ClInclude Include="..\..\src\Windows\program\widgets.hpp">
       <Filter>Windows\program</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\mloop.hpp">
       <Filter>Windows\program</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_color.hpp">
+      <Filter>Windows\program\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_data.hpp">
+      <Filter>Windows\program\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_mouse.hpp">
+      <Filter>Windows\program\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_paint.hpp">
+      <Filter>Windows\program\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_stock.hpp">
+      <Filter>Windows\program\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_timer.hpp">
+      <Filter>Windows\program\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_widgets.hpp">
+      <Filter>Windows\program\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_windows.hpp">
+      <Filter>Windows\program\core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\methods\me_setLine.hpp">
+      <Filter>Windows\program\core\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\methods\me_setText.hpp">
+      <Filter>Windows\program\core\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_wheel.hpp">
+      <Filter>Windows\program\core\global</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

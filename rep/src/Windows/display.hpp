@@ -2,12 +2,14 @@
  *                  ____ display ____ 
  *              windows     |        |
  *                       gdiplus     |
- *                             __ mainloop __
- *                       __ paint            |
- *                  __ core                  |
- *              string                       |
- *                                     __ guitool
- *                                  events
+ *                             ___ mloop ___
+ *                       __ paint           |
+ *                ____ core____             |
+ *             string   |      |            |
+ *                   gl'pack   |            |
+ *                          me'pack         |
+ *                                    __ widgets
+ *                                 events
  */
 
 #pragma once
@@ -80,8 +82,13 @@ public:
 		WndExce(!hWnd, TEXT("CreateWindowEx failed!"));
 
 		// Create General Timer
-		SetTimer(hWnd, SENIOR_TIMER, INTERVAL_TIMER, NULL);
-		
+		SetTimer(hWnd, gl_timer::main_id, gl_timer::main_interval, NULL);
+
+		// Set start system
+		gc.set_display_limit(150., 50.);
+		gc.set_reference_point(0, 0);
+		gc.update_expand_scale();
+
 		// Main loop window 
 		MSG message{};
 		while (GetMessage(&message, NULL, 0, 0))
@@ -91,7 +98,7 @@ public:
 		}
 
 		// Delete General Timer
-		KillTimer(hWnd, SENIOR_TIMER);
+		KillTimer(hWnd, gl_timer::main_id);
 
 		GdiplusShutdown(gdiplusToken);
 		return 0;
