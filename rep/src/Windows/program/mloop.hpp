@@ -26,10 +26,20 @@ LRESULT CALLBACK mloop(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				
 				//===================GRAPH CORE====================//
 
-				case (WM_MOUSEWHEEL):
+				case WM_MOUSEWHEEL:
 				{
-					gl_wheel::counter += GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
-					gc.update_scale();
+					if (active_shift_key)
+					{
+						std::cout << 1;
+						gl_wheel::counter_w += GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
+						gc.update_scale_w();
+					}
+					else
+					{
+						gl_wheel::counter += GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
+						gc.update_scale();
+					}
+
 					//std::cout << gl_wheel::counter << std::endl;
 					return 0;
 				}
@@ -64,7 +74,7 @@ LRESULT CALLBACK mloop(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					return 0;
 				}
 
-				case (WM_SIZE):
+				case WM_SIZE:
 				{
 					GetWindowRect(hWnd, &gl_paint::rt);
 					gl_windows::width = (gl_paint::rt.right - gl_paint::rt.left) - 16;
@@ -73,6 +83,27 @@ LRESULT CALLBACK mloop(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					gc.update_expand_scale();
 					
 					return 0;
+				}
+
+				// key sown
+				case WM_KEYDOWN:
+				{
+					switch (wParam)
+					{
+					case VK_SHIFT:
+						active_shift_key = true;
+						return 0;
+					}
+				}
+
+				case WM_KEYUP:
+				{
+					switch (wParam)
+					{
+					case VK_SHIFT:
+						active_shift_key = false;
+						return 0;
+					}
 				}
 
 				//=================================================//

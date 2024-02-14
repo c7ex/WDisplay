@@ -24,6 +24,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Windows\display.hpp" />
     <ClInclude Include="..\..\src\Windows\program\core\core.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_axis.hpp" />
     <ClInclude Include="..\..\src\Windows\program\core\global\gl_color.hpp" />
     <ClInclude Include="..\..\src\Windows\program\core\global\gl_data.hpp" />
     <ClInclude Include="..\..\src\Windows\program\core\global\gl_mouse.hpp" />

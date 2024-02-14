@@ -1,9 +1,11 @@
 #pragma once
 #include"string"
 
+bool active_shift_key;
 std::wstring gl_wstr;
 
 // global data
+#include"global/gl_axis.hpp"
 #include"global/gl_color.hpp"
 #include"global/gl_data.hpp"
 #include"global/gl_mouse.hpp"
@@ -43,6 +45,19 @@ struct graphic_core
 
 		display_limit.x *= scale;
 		display_limit.y *= scale;
+
+		update_expand_scale();
+	}
+
+	double scale_w = 1.;
+
+	void update_scale_w()
+	{
+		display_limit.x /= scale_w;
+
+		scale_w = 1. * pow(1.1, gl_wheel::counter_w);
+
+		display_limit.x *= scale_w;
 
 		update_expand_scale();
 	}

@@ -83,5 +83,8 @@
     <ClInclude Include="..\..\src\Windows\program\core\global\gl_wheel.hpp">
       <Filter>Windows\program\core\global</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\core\global\gl_axis.hpp">
+      <Filter>Windows\program\core\global</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
