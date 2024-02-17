@@ -17,8 +17,9 @@ int main()
 	size_t size = 1e3;
 	std::vector<double> data(size);
 	for (auto i = 0; i < size; i++)
-		data[i] = low(gen);
+		data[i] = low(gen) + (double)i/10.;
 
+	display.set_display_limit(50, 100);
 	display.load_data(data);
 	
 	display.WinMain(

@@ -1,15 +1,29 @@
 /*
- *                  ____ display ____ 
- *              windows     |        |
- *                       gdiplus     |
- *                             ___ mloop ___
- *                       __ paint           |
- *                ____ core____             |
- *             string   |      |            |
- *                   gl'pack   |            |
- *                          me'pack         |
- *                                    __ widgets
- *                                 events
+ *                                  ____ display ____ 
+ *                                 |        |        |
+ *                              windows     |        |
+ *                                          |        |
+ *                                       gdiplus     |
+ *                                                   |
+ *                                          ___ message_loop ___
+ *                                         |                    |
+ *                             ______ graphic_core __           |
+ *                            |                      |          |
+ *                  ______ packs _____               |          |
+ *                 |     |     |       |             |          |
+ *              string   |     |       |             |          |
+ *                       |     |       |             |          |
+ *                    gl'pack  |       |             |          |
+ *                             |       |             |          |
+ *                           me'pack   |             |          |
+ *                                     |             |          |
+ *                                description        |          |
+ *                                                   |          |
+ *                                               rendering      |
+ *                                                              |
+ *                                                         __ widgets
+ *                                                        |
+ *                                                      events
  */
 
 #pragma once
@@ -19,7 +33,7 @@
 #pragma comment (lib, "Gdiplus.lib")
 using namespace Gdiplus;
 
-#include"mloop.hpp"
+#include"message_loop.hpp"
 
  // check on exception
 void WndExce(bool condition, LPCWSTR exceptionText)
@@ -37,6 +51,10 @@ void WndExce(bool condition, LPCWSTR exceptionText)
 
 class Display
 {
+private:
+	double display_limit_x = 500;
+	double display_limit_y = 100;
+
 public:
 	// the correct entry WinMain
 	int WINAPI WinMain(
@@ -53,7 +71,7 @@ public:
 		// Create window class
 		WNDCLASSEX wcex{ sizeof(WNDCLASSEX) };
 		wcex.style = CS_HREDRAW | CS_VREDRAW;
-		wcex.lpfnWndProc = mloop; // message handler
+		wcex.lpfnWndProc = MainMessageHandler; // load main loop
 		wcex.cbClsExtra = 0;
 		wcex.cbWndExtra = 0;
 		wcex.hInstance = hInstance;
@@ -85,7 +103,7 @@ public:
 		SetTimer(hWnd, gl_timer::main_id, gl_timer::main_interval, NULL);
 
 		// Set start system
-		gc.set_display_limit(150., 50.);
+		gc.set_display_limit(display_limit_x, display_limit_y);
 		gc.set_reference_point(0, 0);
 		gc.update_expand_scale();
 
@@ -102,6 +120,13 @@ public:
 
 		GdiplusShutdown(gdiplusToken);
 		return 0;
+	}
+
+public:
+	void set_display_limit(double limit_x, double limit_y)
+	{
+		display_limit_x = limit_x;
+		display_limit_y = limit_y;
 	}
 
 public:

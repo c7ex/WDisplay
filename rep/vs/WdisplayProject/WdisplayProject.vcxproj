@@ -23,23 +23,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Windows\display.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\core.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_axis.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_color.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_data.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_mouse.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_paint.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_stock.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_timer.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_wheel.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_widgets.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\global\gl_windows.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\methods\me_setLine.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\core\methods\me_setText.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\events.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\widgets.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\mloop.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\paint.hpp" />
+    <ClInclude Include="..\..\src\Windows\message_loop.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\description\description.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_axis.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_color.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_data.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_mouse.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_paint.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_stock.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_timer.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_wheel.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_widgets.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_windows.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\graphic_core.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\methods\me_setLine.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\methods\me_setText.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\packs.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphic_core\rendering.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\widgets\events.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\widgets\widgets.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -133,7 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\src\Entry;..\..\src\Windows;..\..\src\Windows\program\;..\..\src\Windows\program\core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\Entry;..\..\src\Windows;..\..\src\Windows\program\;..\..\src\Windows\program\widgets\;..\..\src\Windows\program\graphic_core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -149,7 +151,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\src\Entry;..\..\src\Windows;..\..\src\Windows\program\;..\..\src\Windows\program\core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\src\Entry;..\..\src\Windows;..\..\src\Windows\program\;..\..\src\Windows\program\widgets\;..\..\src\Windows\program\graphic_core\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

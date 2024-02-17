@@ -1,24 +1,4 @@
 #pragma once
-#include"string"
-
-bool active_shift_key;
-std::wstring gl_wstr;
-
-// global data
-#include"global/gl_axis.hpp"
-#include"global/gl_color.hpp"
-#include"global/gl_data.hpp"
-#include"global/gl_mouse.hpp"
-#include"global/gl_paint.hpp"
-#include"global/gl_stock.hpp"
-#include"global/gl_timer.hpp"
-#include"global/gl_wheel.hpp"
-#include"global/gl_widgets.hpp"
-#include"global/gl_windows.hpp"
-
-// methods
-#include"methods/me_setLine.hpp"
-#include"methods/me_setText.hpp"
 
 struct _coord
 {
@@ -38,8 +18,8 @@ struct graphic_core
 
 	void update_scale()
 	{
-		display_limit.x /=  scale;
-		display_limit.y /=  scale;
+		display_limit.x /= scale;
+		display_limit.y /= scale;
 
 		scale = 1. * pow(1.1, gl_wheel::counter);
 
@@ -97,8 +77,8 @@ struct graphic_core
 
 	void update_shift()
 	{
-		shift.x = (hold_mouse.x - gl_mouse::position_x)/ expand_scale.x;
-		shift.y = (gl_mouse::position_y - hold_mouse.y)/ expand_scale.y;
+		shift.x = (hold_mouse.x - gl_mouse::position_x) / expand_scale.x;
+		shift.y = (gl_mouse::position_y - hold_mouse.y) / expand_scale.y;
 	}
 
 	_coord display_limit;

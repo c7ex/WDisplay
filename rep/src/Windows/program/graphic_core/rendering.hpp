@@ -1,5 +1,4 @@
 #pragma once
-#include"core.hpp"
 
 void hAxis(double y)
 {
@@ -15,7 +14,7 @@ void vAxis(double x)
 		me_setLine(mx, 0, mx, gl_windows::height);
 }
 
-// graphic handler
+// graphic core update
 void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	HFONT hFont = CreateFont(14, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 2, 0, L"SYSTEM_FIXED_FONT");
@@ -30,7 +29,6 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::BACKGROUND));
 	Rectangle(gl_paint::hMemDc, 0, 0, gl_windows::width, gl_windows::height);
 
-
 	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::AXIS));
 	
 	hAxis(0);
@@ -42,8 +40,8 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	me_setText(5, 5, L"x ", acoord_x(gl_mouse::position_x));
 	me_setText(5, 15, L"y ", acoord_y(gl_mouse::position_y));
 
-	me_setText(5, 30, L"x ", gc.display_limit.x);
-	me_setText(5, 40, L"y ", gc.display_limit.y);
+	//me_setText(5, 30, L"x ", gc.display_limit.x);
+	//me_setText(5, 40, L"y ", gc.display_limit.y);
 
 	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::TEST_OBJ));
 
@@ -70,7 +68,7 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	DeleteObject(hTmp);
 }
 
-LRESULT repaint(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT rendering(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	gl_paint::hdc = BeginPaint(hWnd, &gl_paint::ps);
 
