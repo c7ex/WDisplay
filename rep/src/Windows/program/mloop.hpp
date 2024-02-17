@@ -30,7 +30,6 @@ LRESULT CALLBACK mloop(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				{
 					if (active_shift_key)
 					{
-						std::cout << 1;
 						gl_wheel::counter_w += GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
 						gc.update_scale_w();
 					}

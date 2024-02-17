@@ -46,11 +46,21 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	me_setText(5, 40, L"y ", gc.display_limit.y);
 
 	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::TEST_OBJ));
-	Rectangle(gl_paint::hMemDc,
-		mcoord_x(20.),
-		mcoord_y(10.),
-		mcoord_x(30.),
-		mcoord_y(20.));
+
+	if (gl_data::content.size() != 0)
+	{
+		for (int i = 0; i < gl_data::content.size()-1; i++)
+		{
+			double x0 = mcoord_x(i);
+			double x1 = mcoord_x(i+1);
+
+			double y0 = mcoord_y(gl_data::content[i]);
+			double y1 = mcoord_y(gl_data::content[i+1]);
+
+			me_setLine(x0, y0, x1, y1);
+		}
+	}
+
 
 	/**********************************************************************************************/
 

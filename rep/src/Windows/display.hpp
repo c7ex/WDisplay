@@ -103,4 +103,10 @@ public:
 		GdiplusShutdown(gdiplusToken);
 		return 0;
 	}
+
+public:
+	void load_data(std::vector<double> data)
+	{
+		gl_data::content = data;
+	}
 };
