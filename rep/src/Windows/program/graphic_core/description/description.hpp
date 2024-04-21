@@ -6,6 +6,12 @@ struct _coord
 	double y = 0;
 };
 
+struct _area
+{
+	_coord coord_begin;
+	_coord coord_end;
+};
+
 // rules:
 //	1. One pixel expand N point coordinates, var: expand_N
 
@@ -96,6 +102,18 @@ struct graphic_core
 		expand_scale.x = gl_windows::width / display_limit.x;
 		expand_scale.y = gl_windows::height / display_limit.y;
 	}
+
+	_area workspace;
+
+	void update_workspace()
+	{
+		workspace.coord_begin.x = acoord_x(0);
+		workspace.coord_begin.y = acoord_y(0);
+
+		workspace.coord_end.x = acoord_x(gl_windows::width);
+		workspace.coord_end.y = acoord_y(gl_windows::height);
+	}
+
 } gc;
 
 //	mouse -> coord

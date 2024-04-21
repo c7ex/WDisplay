@@ -11,13 +11,19 @@ int main()
 {
 	std::random_device device;
 	std::mt19937 gen(device());
-	std::normal_distribution<double> low(10, 5);
+	std::normal_distribution<double> law(10, 5);
+
+	//quantum(0.87);
+	//quantum(0.65);
+	//quantum(0.53);
+	//quantum(0.41);
+	//quantum(0.29);
 
 	Display display;
 	size_t size = 1e3;
 	std::vector<double> data(size);
 	for (auto i = 0; i < size; i++)
-		data[i] = low(gen) + (double)i/10.;
+		data[i] = law(gen) + (double)i/10.;
 
 	display.set_display_limit(50, 100);
 	display.load_data(data);
