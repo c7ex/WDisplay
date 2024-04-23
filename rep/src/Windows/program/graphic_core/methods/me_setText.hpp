@@ -1,3 +1,9 @@
+void me_setText(int x, int y, double value)
+{
+	gl_wstr = std::to_wstring(value);
+	TextOut(gl_paint::hMemDc, x, y, gl_wstr.c_str(), gl_wstr.size());
+}
+
 void me_setText(int x, int y, std::wstring lable, double value)
 {
 	gl_wstr = (lable) + L"(" + std::to_wstring(value) + L")";

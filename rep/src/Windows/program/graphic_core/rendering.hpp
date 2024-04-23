@@ -27,13 +27,36 @@ double quantum(double number)
 		//std::cout << std::endl << "r" << lines << std::endl;
 	}
 
-	//std::cout << quant << std::endl;
-
-	//std::cout << lines << std::endl << std::endl;
-
 	return quant;
 }
 
+void axis_label_x(double a_pos_x, double a_pos_y, double var)
+{
+	double m_pos_x = mcoord_x(a_pos_x);
+	double m_pos_y = mcoord_y(a_pos_y);
+
+	if (m_pos_y < 5)
+		m_pos_y = 5;
+	else if (m_pos_y > gl_windows::height - 15)
+		m_pos_y = gl_windows::height - 15;
+
+	me_setText(m_pos_x, m_pos_y, var);
+}
+
+void axis_label_y(double a_pos_x, double a_pos_y, double var)
+{
+	if (var == 0) return;
+
+	double m_pos_x = mcoord_x(a_pos_x);
+	double m_pos_y = mcoord_y(a_pos_y);
+
+	if (m_pos_x < 5)
+		m_pos_x = 5;
+	else if (m_pos_x > gl_windows::width - 15)
+		m_pos_x = gl_windows::width - 15;
+
+	me_setText(m_pos_x, m_pos_y, var);
+}
 
 void hMainAxis(double y)
 {
@@ -101,12 +124,14 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		while (r_x * d_x <= gc.workspace.coord_end.x)
 		{
 			vSupportiveAxis(r_x * d_x);
+			axis_label_x(r_x * d_x, 0, r_x * d_x);
 			r_x++;
 		}
 
 		while (r_y * d_y <= gc.workspace.coord_begin.y)
 		{
 			hSupportiveAxis(r_y * d_y);
+			axis_label_y(0, r_y * d_y, r_y * d_y);
 			r_y++;
 		}
 		/*---                                     ---*/
