@@ -111,12 +111,11 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		double d_x = quantum(gc.display_limit.x);
 		double d_y = quantum(gc.display_limit.y);
 
-		double r_x = round(gc.workspace.coord_begin.x / d_x);
-		double r_y = round(gc.workspace.coord_end.y / d_y);
+		double s_x = round(gc.workspace.coord_begin.x / d_x);
+		double s_y = round(gc.workspace.coord_end.y / d_y);
 
-		std::cout << r_x << " " << d_x << " " << r_x*d_x << std::endl;
-
-		vSupportiveAxis(r_x * d_x);
+		double r_x = s_x;
+		double r_y = s_y;
 
 		if ((r_x * d_x) < gc.workspace.coord_begin.x) r_x++;
 		if ((r_y * d_y) < gc.workspace.coord_end.y) r_y++;
@@ -124,13 +123,28 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		while (r_x * d_x <= gc.workspace.coord_end.x)
 		{
 			vSupportiveAxis(r_x * d_x);
-			axis_label_x(r_x * d_x, 0, r_x * d_x);
+			//axis_label_x(r_x * d_x, 0, r_x * d_x);
 			r_x++;
 		}
 
 		while (r_y * d_y <= gc.workspace.coord_begin.y)
 		{
 			hSupportiveAxis(r_y * d_y);
+			//axis_label_y(0, r_y * d_y, r_y * d_y);
+			r_y++;
+		}
+
+		r_x = s_x;
+		r_y = s_y;
+
+		while (r_x * d_x <= gc.workspace.coord_end.x)
+		{
+			axis_label_x(r_x * d_x, 0, r_x * d_x);
+			r_x++;
+		}
+
+		while (r_y * d_y <= gc.workspace.coord_begin.y)
+		{
 			axis_label_y(0, r_y * d_y, r_y * d_y);
 			r_y++;
 		}

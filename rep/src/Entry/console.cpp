@@ -1,4 +1,5 @@
 ﻿#include"iostream"
+#include"iomanip"
 #include"display.hpp"
 #include"random"
 
@@ -12,12 +13,6 @@ int main()
 	std::random_device device;
 	std::mt19937 gen(device());
 	std::normal_distribution<double> law(10, 5);
-
-	//quantum(0.87);
-	//quantum(0.65);
-	//quantum(0.53);
-	//quantum(0.41);
-	//quantum(0.29);
 
 	Display display;
 	size_t size = 1e3;
