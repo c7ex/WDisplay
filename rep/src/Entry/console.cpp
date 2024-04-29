@@ -1,7 +1,8 @@
 ﻿#include"iostream"
 #include"iomanip"
-#include"display.hpp"
 #include"random"
+
+#include"display.hpp"
 
 HINSTANCE arg_hInstance;
 HINSTANCE arg_hPrevInstance;
@@ -14,14 +15,18 @@ int main()
 	std::mt19937 gen(device());
 	std::normal_distribution<double> law(10, 5);
 
-	Display display;
-	size_t size = 1e3;
-	std::vector<double> data(size);
+	display display;
+	size_t size = 1e6;
+	std::vector<double> data_x(size);
+	std::vector<double> data_y(size);
 	for (auto i = 0; i < size; i++)
-		data[i] = law(gen) + (double)i/10.;
+	{
+		data_x[i] = 0.1*i;
+		data_y[i] = law(gen) + (double)i / 10.;
+	}
 
-	display.set_display_limit(50, 100);
-	display.load_data(data);
+	display.set_display_limit(1000, 300);
+	display.load_data(data_x, data_y);
 	
 	display.WinMain(
 		arg_hInstance,

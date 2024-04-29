@@ -105,57 +105,151 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 
 
-		/*---                              SupportiveAxis                             ---*/
-		SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::AXIS));
+	/*---                                 Axis                               ---*/
+	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::AXIS));
 
-		double d_x = quantum(gc.display_limit.x);
-		double d_y = quantum(gc.display_limit.y);
+	double d_x = quantum(gc.display_limit.x);
+	double d_y = quantum(gc.display_limit.y);
 
-		double s_x = round(gc.workspace.coord_begin.x / d_x);
-		double s_y = round(gc.workspace.coord_end.y / d_y);
+	double s_x = round(gc.workspace.coord_begin.x / d_x);
+	double s_y = round(gc.workspace.coord_end.y / d_y);
 
-		double r_x = s_x;
-		double r_y = s_y;
+	double r_x = s_x;
+	double r_y = s_y;
 
-		if ((r_x * d_x) < gc.workspace.coord_begin.x) r_x++;
-		if ((r_y * d_y) < gc.workspace.coord_end.y) r_y++;
+	if ((r_x * d_x) < gc.workspace.coord_begin.x) r_x++;
+	if ((r_y * d_y) < gc.workspace.coord_end.y) r_y++;
 
-		while (r_x * d_x <= gc.workspace.coord_end.x)
-		{
-			vSupportiveAxis(r_x * d_x);
-			//axis_label_x(r_x * d_x, 0, r_x * d_x);
-			r_x++;
-		}
+	while (r_x * d_x <= gc.workspace.coord_end.x)
+	{
+		vSupportiveAxis(r_x * d_x);
+		//axis_label_x(r_x * d_x, 0, r_x * d_x);
+		r_x++;
+	}
 
-		while (r_y * d_y <= gc.workspace.coord_begin.y)
-		{
-			hSupportiveAxis(r_y * d_y);
-			//axis_label_y(0, r_y * d_y, r_y * d_y);
-			r_y++;
-		}
+	while (r_y * d_y <= gc.workspace.coord_begin.y)
+	{
+		hSupportiveAxis(r_y * d_y);
+		//axis_label_y(0, r_y * d_y, r_y * d_y);
+		r_y++;
+	}
 
-		r_x = s_x;
-		r_y = s_y;
+	r_x = s_x;
+	r_y = s_y;
 
-		while (r_x * d_x <= gc.workspace.coord_end.x)
-		{
-			axis_label_x(r_x * d_x, 0, r_x * d_x);
-			r_x++;
-		}
+	while (r_x * d_x <= gc.workspace.coord_end.x)
+	{
+		axis_label_x(r_x * d_x, 0, r_x * d_x);
+		r_x++;
+	}
 
-		while (r_y * d_y <= gc.workspace.coord_begin.y)
-		{
-			axis_label_y(0, r_y * d_y, r_y * d_y);
-			r_y++;
-		}
-		/*---                                     ---*/
-
-
+	while (r_y * d_y <= gc.workspace.coord_begin.y)
+	{
+		axis_label_y(0, r_y * d_y, r_y * d_y);
+		r_y++;
+	}
 
 	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::MAINAXIS));
 
 	hMainAxis(0);
 	vMainAxis(0);
+
+	/*---                              [end] Axis                               ---*/
+
+
+
+	/*---                              Data render                              ---*/
+	if (gl_data::data_content._data_x.size() != 0)
+	{
+		//SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::TEST_OBJ1));
+		//for (int i = 0; i < gl_data::data_content._data_x.size() - 1; i++)
+		//{
+		//	double x0 = mcoord_x(gl_data::data_content._data_x[i]);
+		//	double x1 = mcoord_x(gl_data::data_content._data_x[i + 1]);
+
+		//	double y0 = mcoord_y(gl_data::data_content._data_y[i]);
+		//	double y1 = mcoord_y(gl_data::data_content._data_y[i + 1]);
+
+		//	me_setLine(x0, y0, x1, y1);
+		//}
+
+		SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::TEST_OBJ2));
+
+		long long data_size = gl_data::data_content._data_x.size();
+		double start_data_x =(gl_data::data_content._data_x[0]);
+		double end_data_x = (gl_data::data_content._data_x[data_size - 1]);
+
+		if ((end_data_x > gc.workspace.coord_begin.x) && (start_data_x < gc.workspace.coord_end.x))
+		{
+			long long start_index = 0;
+			long long end_index = data_size - 1;
+
+			if (start_data_x < gc.workspace.coord_begin.x)
+			{
+				double current_x = gl_data::data_content._data_x[start_index];
+				while (gl_data::data_content._data_x[start_index] < gc.workspace.coord_begin.x)
+					start_index++;
+				
+				if (start_index != 0)
+					start_index--;
+			}
+
+			if (end_data_x > gc.workspace.coord_end.x)
+			{
+				double current_x = gl_data::data_content._data_x[end_index];
+				while (gl_data::data_content._data_x[end_index] > gc.workspace.coord_end.x)
+					end_index--;
+
+				if (end_index > (data_size - 1))
+					end_index = data_size - 1;
+			}
+
+			double mouse_coord_data_start = mcoord_x(gl_data::data_content._data_x[start_index]);
+			double mouse_coord_data_end = mcoord_x(gl_data::data_content._data_x[end_index]);
+			double mouse_width = mouse_coord_data_end - mouse_coord_data_start;
+			long long count = end_index - start_index;
+			me_setText(5, 25, L"width pixels", mouse_width);
+			me_setText(5, 35, L"count data", count);
+
+			double compressed_scale = count / mouse_width;
+			me_setText(5, 45, L"compressed", compressed_scale);
+			
+			if (compressed_scale > 2)
+			{
+				double c = start_index;
+				double n = c + compressed_scale;
+
+				while (n < end_index)
+				{
+					double x0 = mcoord_x(gl_data::data_content._data_x[c]);
+					double x1 = mcoord_x(gl_data::data_content._data_x[n]);
+
+					double y0 = mcoord_y(gl_data::data_content._data_y[c]);
+					double y1 = mcoord_y(gl_data::data_content._data_y[n]);
+
+					me_setLine(x0, y0, x1, y1);
+
+					c = n;
+					n = c + compressed_scale;
+				}
+			}
+			else
+			{
+				for (int i = start_index; i < end_index; i++)
+				{
+					double x0 = mcoord_x(gl_data::data_content._data_x[i]);
+					double x1 = mcoord_x(gl_data::data_content._data_x[i + 1]);
+
+					double y0 = mcoord_y(gl_data::data_content._data_y[i]);
+					double y1 = mcoord_y(gl_data::data_content._data_y[i + 1]);
+
+					me_setLine(x0, y0, x1, y1);
+				}
+			}
+		}
+
+	}
+	/*---                           [end] Data render                           ---*/
 
 
 	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::BACKGROUND));
@@ -169,31 +263,14 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	me_setText(5, 15, L"y ", acoord_y(gl_mouse::position_y));
 
 	// show data for limit area
-	me_setText(5, 30, L"x ", gc.display_limit.x);
-	me_setText(5, 40, L"y ", gc.display_limit.y);
+	//me_setText(5, 30, L"x ", gc.display_limit.x);
+	//me_setText(5, 40, L"y ", gc.display_limit.y);
 
 	// show data for workspace area
-	me_setText(5, 55, L"x ", gc.workspace.coord_begin.x);
-	me_setText(5, 65, L"y ", gc.workspace.coord_begin.y);
-	me_setText(5, 75, L"x ", gc.workspace.coord_end.x);
-	me_setText(5, 85, L"y ", gc.workspace.coord_end.y);
-
-	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::TEST_OBJ));
-
-	if (gl_data::content.size() != 0)
-	{
-		for (int i = 0; i < gl_data::content.size() - 1; i++)
-		{
-			double x0 = mcoord_x(i);
-			double x1 = mcoord_x(i+1);
-
-			double y0 = mcoord_y(gl_data::content[i]);
-			double y1 = mcoord_y(gl_data::content[i+1]);
-
-			me_setLine(x0, y0, x1, y1);
-		}
-	}
-
+	//me_setText(5, 55, L"x ", gc.workspace.coord_begin.x);
+	//me_setText(5, 65, L"y ", gc.workspace.coord_begin.y);
+	//me_setText(5, 75, L"x ", gc.workspace.coord_end.x);
+	//me_setText(5, 85, L"y ", gc.workspace.coord_end.y);
 
 	/**********************************************************************************************/
 
