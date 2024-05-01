@@ -161,18 +161,6 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	/*---                              Data render                              ---*/
 	if (gl_data::data_content._data_x.size() != 0)
 	{
-		//SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::TEST_OBJ1));
-		//for (int i = 0; i < gl_data::data_content._data_x.size() - 1; i++)
-		//{
-		//	double x0 = mcoord_x(gl_data::data_content._data_x[i]);
-		//	double x1 = mcoord_x(gl_data::data_content._data_x[i + 1]);
-
-		//	double y0 = mcoord_y(gl_data::data_content._data_y[i]);
-		//	double y1 = mcoord_y(gl_data::data_content._data_y[i + 1]);
-
-		//	me_setLine(x0, y0, x1, y1);
-		//}
-
 		SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::TEST_OBJ2));
 
 		long long data_size = gl_data::data_content._data_x.size();
@@ -186,7 +174,6 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			if (start_data_x < gc.workspace.coord_begin.x)
 			{
-				double current_x = gl_data::data_content._data_x[start_index];
 				while (gl_data::data_content._data_x[start_index] < gc.workspace.coord_begin.x)
 					start_index++;
 				
@@ -196,7 +183,6 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 			if (end_data_x > gc.workspace.coord_end.x)
 			{
-				double current_x = gl_data::data_content._data_x[end_index];
 				while (gl_data::data_content._data_x[end_index] > gc.workspace.coord_end.x)
 					end_index--;
 
@@ -221,11 +207,34 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 				while (n < end_index)
 				{
+					// search extremums
+					long long local_current_index = c;
+
+					double extremum_min = gl_data::data_content._data_y[c];
+					double extremum_max = gl_data::data_content._data_y[c];
+
+					while (local_current_index <= n)
+					{
+						if (gl_data::data_content._data_y[local_current_index] < extremum_min)
+						{
+							extremum_min = gl_data::data_content._data_y[local_current_index];
+							local_current_index++;
+						}
+
+						if (gl_data::data_content._data_y[local_current_index] > extremum_max)
+						{
+							extremum_max = gl_data::data_content._data_y[local_current_index];
+						}
+
+						local_current_index++;
+					}
+					//
+
 					double x0 = mcoord_x(gl_data::data_content._data_x[c]);
 					double x1 = mcoord_x(gl_data::data_content._data_x[n]);
 
-					double y0 = mcoord_y(gl_data::data_content._data_y[c]);
-					double y1 = mcoord_y(gl_data::data_content._data_y[n]);
+					double y0 = mcoord_y(extremum_min);
+					double y1 = mcoord_y(extremum_max);
 
 					me_setLine(x0, y0, x1, y1);
 

@@ -13,16 +13,18 @@ int main()
 {
 	std::random_device device;
 	std::mt19937 gen(device());
-	std::normal_distribution<double> law(10, 5);
+	std::normal_distribution<double> law(0, 10);
+	double amplitude = 1000;
+	double tau = 100;
 
 	display display;
-	size_t size = 1e6;
+	size_t size = 1e4;
 	std::vector<double> data_x(size);
 	std::vector<double> data_y(size);
 	for (auto i = 0; i < size; i++)
 	{
-		data_x[i] = 0.1*i;
-		data_y[i] = law(gen) + (double)i / 10.;
+		data_x[i] = i;
+		data_y[i] = amplitude * sin((double)i / tau) / ((double)i / tau);// + law(gen);
 	}
 
 	display.set_display_limit(1000, 300);

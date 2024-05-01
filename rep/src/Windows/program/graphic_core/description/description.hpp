@@ -12,9 +12,6 @@ struct _area
 	_coord coord_end;
 };
 
-// rules:
-//	1. One pixel expand N point coordinates, var: expand_N
-
 double acoord_x(double);
 double acoord_y(double);
 
