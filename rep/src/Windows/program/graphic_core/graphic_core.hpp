@@ -56,8 +56,9 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		case WM_SIZE:
 		{
 			GetWindowRect(hWnd, &gl_paint::rt);
-			gl_windows::width = (gl_paint::rt.right - gl_paint::rt.left) - 16;
-			gl_windows::height = (gl_paint::rt.bottom - gl_paint::rt.top) - 39;
+
+			gl_windows::width = (gl_paint::rt.right - gl_paint::rt.left) - GRAPHIC_CORE_WINDOW_CORRECTION_WIDTH;
+			gl_windows::height = (gl_paint::rt.bottom - gl_paint::rt.top) - GRAPHIC_CORE_WINDOW_CORRECTION_HEIGHT;
 
 			gc.update_expand_scale();
 

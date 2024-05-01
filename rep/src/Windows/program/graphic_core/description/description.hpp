@@ -1,9 +1,13 @@
 #pragma once
 
-#define GRAPHIC_CORE_START_X 0
-#define GRAPHIC_CORE_START_Y 0
+#define GRAPHIC_CORE_WORKSPACE_START_X 0
+#define GRAPHIC_CORE_WORKSPACE_START_Y 0
 #define GRAPHIC_CORE_DEFAULT_TOTAL_SCALE 1
 #define GRAPHIC_CORE_DEFAULT_WIDTH_SCALE 1
+#define GRAPHIC_CORE_DEFAULT_DISPLAY_LIMIT_X 500
+#define GRAPHIC_CORE_DEFAULT_DISPLAY_LIMIT_y 250
+#define GRAPHIC_CORE_WINDOW_CORRECTION_WIDTH 16
+#define GRAPHIC_CORE_WINDOW_CORRECTION_HEIGHT 39
 
 struct xy_scales
 {
@@ -57,7 +61,7 @@ public:
 	void set_display_limit(double, double);
 
 public:
-	graphic_core() {}
+	graphic_core();
 };
 
 void graphic_core::update_scale()
@@ -117,8 +121,8 @@ void graphic_core::update_expand_scale()
 
 void graphic_core::update_workspace()
 {
-	workspace.coord_begin.x = get_abstract_coordinate_x(GRAPHIC_CORE_START_X);
-	workspace.coord_begin.y = get_abstract_coordinate_y(GRAPHIC_CORE_START_Y);
+	workspace.coord_begin.x = get_abstract_coordinate_x(GRAPHIC_CORE_WORKSPACE_START_X);
+	workspace.coord_begin.y = get_abstract_coordinate_y(GRAPHIC_CORE_WORKSPACE_START_Y);
 
 	workspace.coord_end.x = get_abstract_coordinate_x(gl_windows::width);
 	workspace.coord_end.y = get_abstract_coordinate_y(gl_windows::height);
@@ -144,6 +148,12 @@ void graphic_core::set_display_limit(double x_limit, double y_limit)
 {
 	display_limit.x = x_limit * scale.total;
 	display_limit.y = y_limit * scale.total;
+}
+
+graphic_core::graphic_core()
+{
+	display_limit.x = GRAPHIC_CORE_DEFAULT_DISPLAY_LIMIT_X;
+	display_limit.y = GRAPHIC_CORE_DEFAULT_DISPLAY_LIMIT_y;
 }
 
 graphic_core gc;

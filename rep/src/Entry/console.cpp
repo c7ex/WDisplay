@@ -4,11 +4,6 @@
 
 #include"display.hpp"
 
-HINSTANCE arg_hInstance;
-HINSTANCE arg_hPrevInstance;
-LPSTR     arg_lpCmdLine;
-int       arg_nCmdShow;
-
 int main()
 {
 	std::random_device device;
@@ -16,7 +11,7 @@ int main()
 	std::normal_distribution<double> law(0, 10);
 	double amplitude = 1000;
 	double tau = 100;
-
+	
 	display display;
 	size_t size = 1e4;
 	std::vector<double> data_x(size);
@@ -27,14 +22,9 @@ int main()
 		data_y[i] = amplitude * sin((double)i / tau) / ((double)i / tau);// + law(gen);
 	}
 
-	display.set_display_limit(1000, 300);
+	display.set_display_limit(size, amplitude);
 	display.load_data(data_x, data_y);
-	
-	display.WinMain(
-		arg_hInstance,
-		arg_hPrevInstance,
-		arg_lpCmdLine,
-		arg_nCmdShow);
+	display.run();
 
 	return 0;
 }

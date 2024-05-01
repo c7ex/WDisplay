@@ -1,9 +1,7 @@
 #pragma once
 
-// command list
 #define WM_COMMAND_BUTTON 0
 
-// command handler
 LRESULT events(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (wParam)
@@ -15,7 +13,7 @@ LRESULT events(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 		default:
 		{
-			return 0;;
+			return 0;
 		}
 	}
 }
