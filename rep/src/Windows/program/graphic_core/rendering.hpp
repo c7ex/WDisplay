@@ -32,8 +32,8 @@ double quantum(double number)
 
 void axis_label_x(double a_pos_x, double a_pos_y, double var)
 {
-	double m_pos_x = mcoord_x(a_pos_x);
-	double m_pos_y = mcoord_y(a_pos_y);
+	double m_pos_x = get_mouse_coordinate_x(a_pos_x);
+	double m_pos_y = get_mouse_coordinate_y(a_pos_y);
 
 	if (m_pos_y < 5)
 		m_pos_y = 5;
@@ -47,8 +47,8 @@ void axis_label_y(double a_pos_x, double a_pos_y, double var)
 {
 	if (var == 0) return;
 
-	double m_pos_x = mcoord_x(a_pos_x);
-	double m_pos_y = mcoord_y(a_pos_y);
+	double m_pos_x = get_mouse_coordinate_x(a_pos_x);
+	double m_pos_y = get_mouse_coordinate_y(a_pos_y);
 
 	if (m_pos_x < 5)
 		m_pos_x = 5;
@@ -60,28 +60,28 @@ void axis_label_y(double a_pos_x, double a_pos_y, double var)
 
 void hMainAxis(double y)
 {
-	double my = mcoord_y(y);
+	double my = get_mouse_coordinate_y(y);
 	if (my > 0)
 		me_setLine(0, my, gl_windows::width, my);
 }
 
 void vMainAxis(double x)
 {
-	double mx = mcoord_x(x);
+	double mx = get_mouse_coordinate_x(x);
 	if (mx >= 0)
 		me_setLine(mx, 0, mx, gl_windows::height);
 }
 
 void hSupportiveAxis(double y)
 {
-	double my = mcoord_y(y);
+	double my = get_mouse_coordinate_y(y);
 	if (my > 0)
 		me_setLine(0, my, gl_windows::width, my);
 }
 
 void vSupportiveAxis(double x)
 {
-	double mx = mcoord_x(x);
+	double mx = get_mouse_coordinate_x(x);
 	if (mx >= 0)
 		me_setLine(mx, 0, mx, gl_windows::height);
 }
@@ -190,8 +190,8 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					end_index = data_size - 1;
 			}
 
-			double mouse_coord_data_start = mcoord_x(gl_data::data_content._data_x[start_index]);
-			double mouse_coord_data_end = mcoord_x(gl_data::data_content._data_x[end_index]);
+			double mouse_coord_data_start = get_mouse_coordinate_x(gl_data::data_content._data_x[start_index]);
+			double mouse_coord_data_end = get_mouse_coordinate_x(gl_data::data_content._data_x[end_index]);
 			double mouse_width = mouse_coord_data_end - mouse_coord_data_start;
 			long long count = end_index - start_index;
 			me_setText(5, 25, L"width pixels", mouse_width);
@@ -230,11 +230,11 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 					}
 					//
 
-					double x0 = mcoord_x(gl_data::data_content._data_x[c]);
-					double x1 = mcoord_x(gl_data::data_content._data_x[n]);
+					double x0 = get_mouse_coordinate_x(gl_data::data_content._data_x[c]);
+					double x1 = get_mouse_coordinate_x(gl_data::data_content._data_x[n]);
 
-					double y0 = mcoord_y(extremum_min);
-					double y1 = mcoord_y(extremum_max);
+					double y0 = get_mouse_coordinate_y(extremum_min);
+					double y1 = get_mouse_coordinate_y(extremum_max);
 
 					me_setLine(x0, y0, x1, y1);
 
@@ -246,11 +246,11 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			{
 				for (int i = start_index; i < end_index; i++)
 				{
-					double x0 = mcoord_x(gl_data::data_content._data_x[i]);
-					double x1 = mcoord_x(gl_data::data_content._data_x[i + 1]);
+					double x0 = get_mouse_coordinate_x(gl_data::data_content._data_x[i]);
+					double x1 = get_mouse_coordinate_x(gl_data::data_content._data_x[i + 1]);
 
-					double y0 = mcoord_y(gl_data::data_content._data_y[i]);
-					double y1 = mcoord_y(gl_data::data_content._data_y[i + 1]);
+					double y0 = get_mouse_coordinate_y(gl_data::data_content._data_y[i]);
+					double y1 = get_mouse_coordinate_y(gl_data::data_content._data_y[i + 1]);
 
 					me_setLine(x0, y0, x1, y1);
 				}
@@ -268,8 +268,8 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	me_setText(5, gl_windows::height - 15, L"Mouse working area y", gl_mouse::position_y);
 
 	// show data for current abstruct coord
-	me_setText(5, 5, L"x ", acoord_x(gl_mouse::position_x));
-	me_setText(5, 15, L"y ", acoord_y(gl_mouse::position_y));
+	me_setText(5, 5, L"x ", get_abstract_coordinate_x(gl_mouse::position_x));
+	me_setText(5, 15, L"y ", get_abstract_coordinate_y(gl_mouse::position_y));
 
 	// show data for limit area
 	//me_setText(5, 30, L"x ", gc.display_limit.x);
