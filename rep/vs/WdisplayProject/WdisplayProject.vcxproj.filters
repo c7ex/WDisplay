@@ -44,59 +44,50 @@
     <ClInclude Include="..\..\src\Windows\message_loop.hpp">
       <Filter>Windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\graphic_core.hpp">
-      <Filter>Windows\program\graphic_core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\packs.hpp">
-      <Filter>Windows\program\graphic_core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\rendering.hpp">
-      <Filter>Windows\program\graphic_core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\description\description.hpp">
-      <Filter>Windows\program\graphic_core\description</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\methods\me_setLine.hpp">
-      <Filter>Windows\program\graphic_core\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\methods\me_setText.hpp">
-      <Filter>Windows\program\graphic_core\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_axis.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_color.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_data.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_mouse.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_paint.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_stock.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_timer.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_wheel.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_widgets.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphic_core\global\gl_windows.hpp">
-      <Filter>Windows\program\graphic_core\global</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\widgets\events.hpp">
       <Filter>Windows\program\widgets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\widgets\widgets.hpp">
       <Filter>Windows\program\widgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\description\description.hpp">
+      <Filter>Windows\program\graphic_core\description</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_color.hpp">
+      <Filter>Windows\program\graphic_core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_data.hpp">
+      <Filter>Windows\program\graphic_core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_paint.hpp">
+      <Filter>Windows\program\graphic_core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_stock.hpp">
+      <Filter>Windows\program\graphic_core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_timer.hpp">
+      <Filter>Windows\program\graphic_core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_widgets.hpp">
+      <Filter>Windows\program\graphic_core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_windows.hpp">
+      <Filter>Windows\program\graphic_core\global</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\me_setLine.hpp">
+      <Filter>Windows\program\graphic_core\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\me_setText.hpp">
+      <Filter>Windows\program\graphic_core\methods</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\graphic_core.hpp">
+      <Filter>Windows\program\graphic_core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\packs.hpp">
+      <Filter>Windows\program\graphic_core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\rendering.hpp">
+      <Filter>Windows\program\graphic_core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -8,19 +8,19 @@
  *                                         |                          ^
  *                                         |                          ^
  *                                         |                          ^
- *                             ______ graphic_core __                 ^
- *                            |                      |                ^
- *                  ______ packs _____               |                ^
- *                 |     |     |       |             |                ^
- *              string   |     |       |             |                ^   <- empty branch
- *                       |     |       |             |                ^
- *                    gl'pack  |       |             |                ^
- *                             |       |             |                ^
- *                           me'pack   |             |                ^
- *                                     |             |                ^
- *                                description        |                ^
- *                                                   |                ^
- *                                               rendering            ^
+ *                              _____ graphics_core __                ^
+ *                             |                      |               ^
+ *                   ______ packs _____               |               ^
+ *                  |     |     |       |             |               ^
+ *               string   |     |       |             |               ^   <- empty branch
+ *                        |     |       |             |               ^
+ *                     gl'pack  |       |             |               ^
+ *                              |       |             |               ^
+ *                            me'pack   |             |               ^
+ *                                      |             |               ^
+ *                                 description        |               ^
+ *                                                    |               ^
+ *                                                rendering           ^
  *                                                                    |
  *                                                               __ widgets
  *                                                              |

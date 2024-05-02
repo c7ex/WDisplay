@@ -8,17 +8,17 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 	{
 		case WM_MOUSEWHEEL:
 		{
-			if (gl_mouse::hold == true)
+			if (gc.mouse.is_hold == true)
 				return 0;
 
 			if (active_shift_key)
 			{
-				gl_wheel::counter_w -= GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
+				gc.scales.width_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
 				gc.update_scale_w();
 			}
 			else
 			{
-				gl_wheel::counter -= GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
+				gc.scales.total_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
 				gc.update_scale();
 			}
 
@@ -27,7 +27,7 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 		case WM_LBUTTONDOWN:
 		{
-			gl_mouse::hold = true;
+			gc.mouse.is_hold = true;
 			gc.update_hold();
 			//SetCapture(hWnd);
 			return 0;
@@ -35,17 +35,17 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 		case WM_LBUTTONUP:
 		{
-			gl_mouse::hold = false;
+			gc.mouse.is_hold = false;
 			//ReleaseCapture();
 			return 0;
 		}
 
 		case WM_MOUSEMOVE:
 		{
-			gl_mouse::position_x = LOWORD(lParam);
-			gl_mouse::position_y = HIWORD(lParam);
+			gc.mouse.current_position.x = LOWORD(lParam);
+			gc.mouse.current_position.y = HIWORD(lParam);
 
-			if (gl_mouse::hold == true)
+			if (gc.mouse.is_hold == true)
 			{
 				gc.update_shift();
 				gc.update_reference_point();
@@ -57,8 +57,8 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		{
 			GetWindowRect(hWnd, &gl_paint::rt);
 
-			gl_windows::width = (gl_paint::rt.right - gl_paint::rt.left) - GRAPHIC_CORE_WINDOW_CORRECTION_WIDTH;
-			gl_windows::height = (gl_paint::rt.bottom - gl_paint::rt.top) - GRAPHIC_CORE_WINDOW_CORRECTION_HEIGHT;
+			gl_windows::width = (gl_paint::rt.right - gl_paint::rt.left) - GRAPHICS_CORE_WINDOW_CORRECTION_WIDTH;
+			gl_windows::height = (gl_paint::rt.bottom - gl_paint::rt.top) - GRAPHICS_CORE_WINDOW_CORRECTION_HEIGHT;
 
 			gc.update_expand_scale();
 

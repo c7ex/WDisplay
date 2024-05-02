@@ -13,13 +13,13 @@ double quantum(double number)
 
 	double lines = number / quant;
 
-	while ((lines > 10) || (lines < 5))
+	while ((lines > 20) || (lines < 10))
 	{
-		if (lines >= 10)
+		if (lines >= 20)
 		{
-			quant *= 5;
+			quant *= 10;
 		}
-		else if (lines <= 5)
+		else if (lines <= 10)
 		{
 			quant /= 2;
 		}
@@ -108,42 +108,40 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	/*---                                 Axis                               ---*/
 	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::AXIS));
 
-	double d_x = quantum(gc.display_limit.x);
-	double d_y = quantum(gc.display_limit.y);
+	double d_x = quantum(gc.window.coordinates_limit.x);
+	double d_y = quantum(gc.window.coordinates_limit.y);
 
-	double s_x = round(gc.workspace.coord_begin.x / d_x);
-	double s_y = round(gc.workspace.coord_end.y / d_y);
+	double s_x = round(gc.window.coordinates_begin.x / d_x);
+	double s_y = round(gc.window.coordinates_end.y / d_y);
 
 	double r_x = s_x;
 	double r_y = s_y;
 
-	if ((r_x * d_x) < gc.workspace.coord_begin.x) r_x++;
-	if ((r_y * d_y) < gc.workspace.coord_end.y) r_y++;
+	if ((r_x * d_x) < gc.window.coordinates_begin.x) r_x++;
+	if ((r_y * d_y) < gc.window.coordinates_end.y) r_y++;
 
-	while (r_x * d_x <= gc.workspace.coord_end.x)
+	while (r_x * d_x <= gc.window.coordinates_end.x)
 	{
 		vSupportiveAxis(r_x * d_x);
-		//axis_label_x(r_x * d_x, 0, r_x * d_x);
 		r_x++;
 	}
 
-	while (r_y * d_y <= gc.workspace.coord_begin.y)
+	while (r_y * d_y <= gc.window.coordinates_begin.y)
 	{
 		hSupportiveAxis(r_y * d_y);
-		//axis_label_y(0, r_y * d_y, r_y * d_y);
 		r_y++;
 	}
 
 	r_x = s_x;
 	r_y = s_y;
 
-	while (r_x * d_x <= gc.workspace.coord_end.x)
+	while (r_x * d_x <= gc.window.coordinates_end.x)
 	{
 		axis_label_x(r_x * d_x, 0, r_x * d_x);
 		r_x++;
 	}
 
-	while (r_y * d_y <= gc.workspace.coord_begin.y)
+	while (r_y * d_y <= gc.window.coordinates_begin.y)
 	{
 		axis_label_y(0, r_y * d_y, r_y * d_y);
 		r_y++;
@@ -167,23 +165,23 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		double start_data_x =(gl_data::data_content._data_x[0]);
 		double end_data_x = (gl_data::data_content._data_x[data_size - 1]);
 
-		if ((end_data_x > gc.workspace.coord_begin.x) && (start_data_x < gc.workspace.coord_end.x))
+		if ((end_data_x > gc.window.coordinates_begin.x) && (start_data_x < gc.window.coordinates_end.x))
 		{
 			long long start_index = 0;
 			long long end_index = data_size - 1;
 
-			if (start_data_x < gc.workspace.coord_begin.x)
+			if (start_data_x < gc.window.coordinates_begin.x)
 			{
-				while (gl_data::data_content._data_x[start_index] < gc.workspace.coord_begin.x)
+				while (gl_data::data_content._data_x[start_index] < gc.window.coordinates_begin.x)
 					start_index++;
 				
 				if (start_index != 0)
 					start_index--;
 			}
 
-			if (end_data_x > gc.workspace.coord_end.x)
+			if (end_data_x > gc.window.coordinates_end.x)
 			{
-				while (gl_data::data_content._data_x[end_index] > gc.workspace.coord_end.x)
+				while (gl_data::data_content._data_x[end_index] > gc.window.coordinates_end.x)
 					end_index--;
 
 				if (end_index > (data_size - 1))
@@ -260,16 +258,15 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	}
 	/*---                           [end] Data render                           ---*/
 
-
 	SelectObject(gl_paint::hMemDc, reinterpret_cast<HGDIOBJ>(gl_stock::pen::BACKGROUND));
 
 	// show data for current mouse position
-	me_setText(5, gl_windows::height - 30, L"Mouse working area x", gl_mouse::position_x);
-	me_setText(5, gl_windows::height - 15, L"Mouse working area y", gl_mouse::position_y);
+	me_setText(5, gl_windows::height - 30, L"Mouse working area x", gc.mouse.current_position.x);
+	me_setText(5, gl_windows::height - 15, L"Mouse working area y", gc.mouse.current_position.y);
 
 	// show data for current abstruct coord
-	me_setText(5, 5, L"x ", get_abstract_coordinate_x(gl_mouse::position_x));
-	me_setText(5, 15, L"y ", get_abstract_coordinate_y(gl_mouse::position_y));
+	me_setText(5, 5, L"x ", get_abstract_coordinate_x(gc.mouse.current_position.x));
+	me_setText(5, 15, L"y ", get_abstract_coordinate_y(gc.mouse.current_position.y));
 
 	// show data for limit area
 	//me_setText(5, 30, L"x ", gc.display_limit.x);
