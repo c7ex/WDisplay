@@ -5,10 +5,10 @@
 #define GRAPHICS_CORE_WINDOW_START_Y 0
 #define GRAPHICS_CORE_DEFAULT_TOTAL_SCALE 1
 #define GRAPHICS_CORE_DEFAULT_WIDTH_SCALE 1
-#define GRAPHICS_CORE_DEFAULT_DISPLAY_LIMIT_X 500
-#define GRAPHICS_CORE_DEFAULT_DISPLAY_LIMIT_Y 250
 #define GRAPHICS_CORE_WINDOW_CORRECTION_WIDTH 16
 #define GRAPHICS_CORE_WINDOW_CORRECTION_HEIGHT 39
+#define GRAPHICS_CORE_DEFAULT_DISPLAY_LIMIT_Y 250
+#define GRAPHICS_CORE_DEFAULT_DISPLAY_LIMIT_X 250
 
 struct _xy
 {
@@ -31,6 +31,7 @@ struct window_settings
 	_xy coordinates_begin;
 	_xy coordinates_end;
 	_xy coordinates_limit;
+	_xy count_pixels;
 };
 
 struct mouse_settings
@@ -131,8 +132,8 @@ void graphics_core::update_shift()
 
 void graphics_core::update_expand_scale()
 {
-	scales.stretching.x = gl_windows::width / window.coordinates_limit.x;
-	scales.stretching.y = gl_windows::height / window.coordinates_limit.y;
+	scales.stretching.x = window.count_pixels.x / window.coordinates_limit.x;
+	scales.stretching.y = window.count_pixels.y / window.coordinates_limit.y;
 }
 
 void graphics_core::update_workspace()
@@ -140,8 +141,8 @@ void graphics_core::update_workspace()
 	window.coordinates_begin.x = get_abstract_coordinate_x(GRAPHICS_CORE_WINDOW_START_X);
 	window.coordinates_begin.y = get_abstract_coordinate_y(GRAPHICS_CORE_WINDOW_START_Y);
 
-	window.coordinates_end.x = get_abstract_coordinate_x(gl_windows::width);
-	window.coordinates_end.y = get_abstract_coordinate_y(gl_windows::height);
+	window.coordinates_end.x = get_abstract_coordinate_x(window.count_pixels.x);
+	window.coordinates_end.y = get_abstract_coordinate_y(window.count_pixels.y);
 }
 
 inline double graphics_core::get_ref_x()

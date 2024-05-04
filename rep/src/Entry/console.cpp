@@ -13,7 +13,7 @@ int main()
 	double tau = 100;
 	
 	display display;
-	size_t size = 1e4;
+	size_t size = 1e6; // 1M points
 	std::vector<double> data_x(size);
 	std::vector<double> data_y(size);
 	for (auto i = 0; i < size; i++)

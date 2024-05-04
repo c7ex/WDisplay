@@ -24,14 +24,10 @@
   <ItemGroup>
     <ClInclude Include="..\..\src\Windows\display.hpp" />
     <ClInclude Include="..\..\src\Windows\message_loop.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\description\description.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_color.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_data.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_paint.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_stock.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_timer.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_widgets.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\gl_windows.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\descriptions\content.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\descriptions\graphics_core.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\stock.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\widgets.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\graphic_core.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\me_setLine.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\me_setText.hpp" />

@@ -1,21 +1,14 @@
 #pragma once
 #include"string"
 
-bool active_shift_key;
-std::wstring gl_wstr;
+// descriptions
+#include"descriptions/content.hpp"
+#include"descriptions/graphics_core.hpp"
 
 // global data
-#include"global/gl_color.hpp"
-#include"global/gl_data.hpp"
-#include"global/gl_paint.hpp"
-#include"global/gl_stock.hpp"
-#include"global/gl_timer.hpp"
-#include"global/gl_widgets.hpp"
-#include"global/gl_windows.hpp"
+#include"global/stock.hpp"
+#include"global/widgets.hpp"
 
 // methods
 #include"methods/me_setLine.hpp"
 #include"methods/me_setText.hpp"
-
-// description
-#include"description/description.hpp"

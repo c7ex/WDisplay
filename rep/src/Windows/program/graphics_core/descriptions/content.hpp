@@ -21,8 +21,3 @@ public:
 
 	content(){}
 };
-
-namespace gl_data
-{
-	content data_content;
-}

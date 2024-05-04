@@ -11,7 +11,7 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			if (gc.mouse.is_hold == true)
 				return 0;
 
-			if (active_shift_key)
+			if (key_is_active::shift)
 			{
 				gc.scales.width_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
 				gc.update_scale_w();
@@ -55,10 +55,11 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 		case WM_SIZE:
 		{
-			GetWindowRect(hWnd, &gl_paint::rt);
+			RECT rt;
+			GetWindowRect(hWnd, &rt);
 
-			gl_windows::width = (gl_paint::rt.right - gl_paint::rt.left) - GRAPHICS_CORE_WINDOW_CORRECTION_WIDTH;
-			gl_windows::height = (gl_paint::rt.bottom - gl_paint::rt.top) - GRAPHICS_CORE_WINDOW_CORRECTION_HEIGHT;
+			gc.window.count_pixels.x = (rt.right - rt.left) - GRAPHICS_CORE_WINDOW_CORRECTION_WIDTH;
+			gc.window.count_pixels.y = (rt.bottom - rt.top) - GRAPHICS_CORE_WINDOW_CORRECTION_HEIGHT;
 
 			gc.update_expand_scale();
 
@@ -70,7 +71,7 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			switch (wParam)
 			{
 			case VK_SHIFT:
-				active_shift_key = true;
+				key_is_active::shift = true;
 				return 0;
 			}
 		}
@@ -80,7 +81,7 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			switch (wParam)
 			{
 			case VK_SHIFT:
-				active_shift_key = false;
+				key_is_active::shift = false;
 				return 0;
 			}
 		}
