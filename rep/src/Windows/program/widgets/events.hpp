@@ -1,5 +1,4 @@
 #pragma once
-
 #define WM_COMMAND_BUTTON 0
 
 LRESULT events(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)

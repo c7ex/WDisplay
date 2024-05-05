@@ -29,8 +29,10 @@
     <ClInclude Include="..\..\src\Windows\program\graphics_core\global\stock.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\global\widgets.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\graphic_core.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\me_setLine.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\me_setText.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\paint_axis.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\paint_data.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\paint_line.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\paint_text.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\packs.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\rendering.hpp" />
     <ClInclude Include="..\..\src\Windows\program\widgets\events.hpp" />

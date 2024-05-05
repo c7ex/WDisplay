@@ -1,3 +1,4 @@
+#pragma once
 std::wstring double2string(double value)
 {
 	if (value == 0)
@@ -28,13 +29,13 @@ std::wstring double2string(double value)
 	return result;
 }
 
-void me_setText(HDC& hMemDc, int x, int y, double value)
+void paint_text(HDC& hMemDc, int x, int y, double value)
 {
 	std::wstring gl_wstr = double2string(value);
 	TextOut(hMemDc, x, y, gl_wstr.c_str(), gl_wstr.size());
 }
 
-void me_setText(HDC& hMemDc, int x, int y, std::wstring lable, double value)
+void paint_text(HDC& hMemDc, int x, int y, std::wstring lable, double value)
 {
 	std::wstring gl_wstr = (lable) + L"(" + std::to_wstring(value) + L")";
 	TextOut(hMemDc, x, y, gl_wstr.c_str(), gl_wstr.size());

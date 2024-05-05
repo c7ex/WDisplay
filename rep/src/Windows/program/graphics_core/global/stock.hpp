@@ -1,3 +1,4 @@
+#pragma once
 namespace stock_objects
 {
 	struct

@@ -10,5 +10,7 @@
 #include"global/widgets.hpp"
 
 // methods
-#include"methods/me_setLine.hpp"
-#include"methods/me_setText.hpp"
+#include"methods/paint_line.hpp"
+#include"methods/paint_text.hpp"
+#include"methods/paint_axis.hpp"
+#include"methods/paint_data.hpp"
