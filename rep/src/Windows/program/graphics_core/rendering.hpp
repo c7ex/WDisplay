@@ -12,13 +12,15 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::brush.background));
 	Rectangle(hMemDc, 0, 0, gc.window.count_pixels.x, gc.window.count_pixels.y);
 
-	// Paint axis
+	// Paint supportive axis
 	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.sup_axis));
 	paint_supportive_axis(hMemDc);
-	paint_main_axis(hMemDc);
 
 	// Paint graphs
 	paint_data(hMemDc);
+
+	// Paint main axis
+	paint_main_axis(hMemDc);
 
 	// Paint axis labels
 	hFont = CreateFont(16, 0, 0, 0, FW_BLACK, 0, 0, 0, 0, 0, 0, 2, 0, L"SYSTEM_FIXED_FONT");

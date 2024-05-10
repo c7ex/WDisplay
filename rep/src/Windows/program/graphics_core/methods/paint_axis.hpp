@@ -3,13 +3,15 @@
 // abstract coordination
 typedef double _Acrd;
 // mouse coordination
-typedef double _Mcrd;
+typedef double _Mcrd; // replace on _Wcrd -> window coordination
 
 #define ZEROVALUE 0
 #define BASELOG10 10
+#define SIZE_FOR_HORIZONTAL_TIES 4
+#define SIZE_FOR_VERTICAL_TIES 6
 
-#define SIPPORTIVE_AXIS_MIN 10.
-#define SIPPORTIVE_AXIS_MAX 25.
+#define SIPPORTIVE_AXIS_MIN 12.
+#define SIPPORTIVE_AXIS_MAX 24.
 #define SIPPORTIVE_AXIS_BACKLASH_START 15
 #define SIPPORTIVE_AXIS_BACKLASH_END 15
 
@@ -27,6 +29,7 @@ double get_discretization_supportive_axis(_Acrd limit)
 	{
 		if (number_of_axes >= SIPPORTIVE_AXIS_MAX)
 			discretization *= SIPPORTIVE_AXIS_MIN;
+
 		else if (number_of_axes <= SIPPORTIVE_AXIS_MIN)
 			discretization /= (SIPPORTIVE_AXIS_MAX / SIPPORTIVE_AXIS_MIN);
 		number_of_axes = (limit / discretization);
@@ -39,14 +42,14 @@ void paint_once_supportive_axis_label(HDC& hMemDc, _Acrd x, _Acrd y, double valu
 {
 	if (value == ZEROVALUE) return;
 
-	_Mcrd coordinate_x = get_mouse_coordinate_x(x);
+	_Mcrd coordinate_x = get_mouse_coordinate_x(x)+5;
 
 	if (coordinate_x < SIPPORTIVE_AXIS_BACKLASH_START)
 		coordinate_x = SIPPORTIVE_AXIS_BACKLASH_START;
 	else if (coordinate_x > gc.window.count_pixels.x - SIPPORTIVE_AXIS_BACKLASH_END)
 		coordinate_x = gc.window.count_pixels.x - SIPPORTIVE_AXIS_BACKLASH_END;
 
-	_Mcrd coordinate_y = get_mouse_coordinate_y(y);
+	_Mcrd coordinate_y = get_mouse_coordinate_y(y)+5;
 
 	if (coordinate_y < SIPPORTIVE_AXIS_BACKLASH_START)
 		coordinate_y = SIPPORTIVE_AXIS_BACKLASH_START;
@@ -68,6 +71,28 @@ void paint_once_vertical_axis(HDC& hMemDc, _Acrd x)
 	_Mcrd coordinate_x = get_mouse_coordinate_x(x);
 	if (coordinate_x >= ZEROVALUE)
 		paint_line(hMemDc, coordinate_x, NULL, coordinate_x, gc.window.count_pixels.y);
+}
+
+void paint_once_ties_on_horizontal_axis(HDC& hMemDc, _Acrd x, _Acrd y, double value)
+{
+	_Mcrd coordinate_x = get_mouse_coordinate_x(x);
+	_Mcrd coordinate_y = get_mouse_coordinate_y(y);
+
+	_Mcrd begin_point_for_vertical_ties = coordinate_y - SIZE_FOR_VERTICAL_TIES;
+	_Mcrd end_point_for_vertical_ties = coordinate_y + SIZE_FOR_VERTICAL_TIES;
+
+	paint_line(hMemDc, coordinate_x, begin_point_for_vertical_ties, coordinate_x, end_point_for_vertical_ties);
+}
+
+void paint_once_ties_on_vertical_axis(HDC& hMemDc, _Acrd x, _Acrd y, double value)
+{
+	_Mcrd coordinate_x = get_mouse_coordinate_x(x);
+	_Mcrd coordinate_y = get_mouse_coordinate_y(y);
+
+	_Mcrd begin_point_for_horizontal_ties = coordinate_x - SIZE_FOR_HORIZONTAL_TIES;
+	_Mcrd end_point_for_horizontal_ties = coordinate_x + SIZE_FOR_HORIZONTAL_TIES;
+
+	paint_line(hMemDc, begin_point_for_horizontal_ties, coordinate_y, end_point_for_horizontal_ties, coordinate_y);
 }
 
 void paint_main_axis(HDC& hMemDc)
@@ -104,7 +129,7 @@ void paint_supportive_axis(HDC& hMemDc)
 
 void paint_supportive_axis_labels(HDC& hMemDc)
 {
-	SetTextColor(hMemDc, stock_objects::color.white);
+	SetTextColor(hMemDc, stock_objects::color.labels_axis);
 
 	_Acrd discret_x = get_discretization_supportive_axis(gc.window.coordinates_limit.x);
 	_Acrd discret_y = get_discretization_supportive_axis(gc.window.coordinates_limit.y);
@@ -115,12 +140,14 @@ void paint_supportive_axis_labels(HDC& hMemDc)
 	while (round_count_x * discret_x <= gc.window.coordinates_end.x)
 	{
 		paint_once_supportive_axis_label(hMemDc, round_count_x * discret_x, ZEROVALUE, round_count_x * discret_x);
+		paint_once_ties_on_horizontal_axis(hMemDc, round_count_x * discret_x, ZEROVALUE, round_count_x * discret_x);
 		round_count_x++;
 	}
 
 	while (round_count_y * discret_y <= gc.window.coordinates_begin.y)
 	{
 		paint_once_supportive_axis_label(hMemDc, ZEROVALUE, round_count_y * discret_y, round_count_y * discret_y);
+		paint_once_ties_on_vertical_axis(hMemDc, ZEROVALUE, round_count_y * discret_y, round_count_y * discret_y);
 		round_count_y++;
 	}
 }

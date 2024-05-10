@@ -13,13 +13,13 @@ int main()
 	double tau = 100;
 	
 	display display;
-	size_t size = 1e6; // 1M points
+	size_t size = 81920; // 1M points
 	std::vector<double> data_x(size);
 	std::vector<double> data_y(size);
 	for (auto i = 0; i < size; i++)
 	{
 		data_x[i] = i;
-		data_y[i] = amplitude * sin((double)i / tau) / ((double)i / tau);// + law(gen);
+		data_y[i] = /*amplitude * sin((double)i / tau) / ((double)i / tau) +*/ law(gen);
 	}
 
 	display.set_display_limit(size, amplitude);
