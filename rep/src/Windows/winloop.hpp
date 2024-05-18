@@ -1,5 +1,5 @@
 #pragma once
-#include"graphic_core.hpp"
+#include"graphics_handler.hpp"
 #include"widgets.hpp"
 
 # define WM_CORE 	WM_MOUSEWHEEL: case WM_LBUTTONDOWN: case WM_LBUTTONUP: case WM_MOUSEMOVE: case WM_SIZE: case WM_KEYDOWN: case WM_KEYUP

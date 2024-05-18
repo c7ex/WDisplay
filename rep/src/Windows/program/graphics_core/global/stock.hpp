@@ -10,7 +10,7 @@ namespace stock_objects
 		COLORREF main_axis    = RGB(0xF5, 0xA5, 0x94);
 		COLORREF sup_axis     = RGB(0x15, 0x15, 0x14);
 		COLORREF labels_axis  = RGB(0xF5, 0x85, 0x85);
-		COLORREF data_style_1 = RGB(0x65, 0x05, 0x44);
+		COLORREF data_style_1 = RGB(0x45, 0x05, 0x24);
 	} color;
 	
 	struct
@@ -19,7 +19,7 @@ namespace stock_objects
 		HPEN main_axis    = CreatePen(PS_SOLID, 1, color.main_axis);
 		HPEN sup_axis     = CreatePen(PS_SOLID, 1, color.sup_axis);
 		HPEN labels_axis  = CreatePen(PS_SOLID, 1, color.labels_axis);
-		HPEN data_style_1 = CreatePen(PS_SOLID, 2, color.data_style_1);
+		HPEN data_style_1 = CreatePen(PS_SOLID, 3, color.data_style_1);
 	} pen;
 
 	struct
@@ -31,6 +31,7 @@ namespace stock_objects
 namespace key_is_active
 {
 	bool shift;
+	bool ctrl;
 }
 
 namespace gl_timer

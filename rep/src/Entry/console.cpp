@@ -9,11 +9,11 @@ int main()
 	std::random_device device;
 	std::mt19937 gen(device());
 	std::normal_distribution<double> law(0, 10);
-	double amplitude = 1000;
+	double amplitude = 100;
 	double tau = 100;
 	
 	display display;
-	size_t size = 81920; // 1M points
+	size_t size = 1e6; // 1M points
 	std::vector<double> data_x(size);
 	std::vector<double> data_y(size);
 	for (auto i = 0; i < size; i++)

@@ -1,12 +1,7 @@
 #pragma once
 
-// content size
-typedef unsigned long long _Csize;
-// content index
-typedef unsigned long long _Cindx;
-
 // search: data[index_result] <= reference_value < index_result[index_result + 1]
-void binary_search(std::vector<double>& data, double reference_value, _Cindx& index_result)
+void binary_search(std::vector<double>& data, _Acrd reference_value, _Cindx& index_result)
 {
 	_Csize volume = data.size();
 	_Cindx r_index = volume - 1;
@@ -48,8 +43,8 @@ void paint_compressed_mode(
 		// search extremums
 		_Cindx local_current_index = current_index;
 
-		double extremum_min = y_values[current_index];
-		double extremum_max = y_values[current_index];
+		_Acrd extremum_min = y_values[current_index];
+		_Acrd extremum_max = y_values[current_index];
 
 		while (local_current_index <= next_index)
 		{
@@ -69,11 +64,11 @@ void paint_compressed_mode(
 		}
 		//
 
-		double x0 = get_mouse_coordinate_x(gl_data::data_content._data_x[current_index]);
-		double x1 = get_mouse_coordinate_x(gl_data::data_content._data_x[next_index]);
+		_Wcrd x0 = get_window_coordinate_x(gl_data::data_content._data_x[current_index]);
+		_Wcrd x1 = get_window_coordinate_x(gl_data::data_content._data_x[next_index]);
 
-		double y0 = get_mouse_coordinate_y(extremum_min);
-		double y1 = get_mouse_coordinate_y(extremum_max);
+		_Wcrd y0 = get_window_coordinate_y(extremum_min);
+		_Wcrd y1 = get_window_coordinate_y(extremum_max);
 
 		paint_line(hMemDc, x0, y0, x1, y1);
 
@@ -91,11 +86,11 @@ void paint_default_mode(HDC& hMemDc,
 	{
 		for (_Cindx i = start_index; i < end_index; i++)
 		{
-			double x0 = get_mouse_coordinate_x(x_values[i]);
-			double x1 = get_mouse_coordinate_x(x_values[i + 1]);
+			_Wcrd x0 = get_window_coordinate_x(x_values[i]);
+			_Wcrd x1 = get_window_coordinate_x(x_values[i + 1]);
 
-			double y0 = get_mouse_coordinate_y(y_values[i]);
-			double y1 = get_mouse_coordinate_y(y_values[i + 1]);
+			_Wcrd y0 = get_window_coordinate_y(y_values[i]);
+			_Wcrd y1 = get_window_coordinate_y(y_values[i + 1]);
 
 			paint_line(hMemDc, x0, y0, x1, y1);
 		}
@@ -109,12 +104,12 @@ void paint_data(HDC& hMemDc)
 		SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.data_style_1));
 
 		// abstruct window range
-		double first_abstruct_value_in_window = gc.window.coordinates_begin.x;
-		double last_abstruct_value_in_window = gc.window.coordinates_end.x;
+		_Acrd first_abstruct_value_in_window = gc.window.coordinates_begin.x;
+		_Acrd last_abstruct_value_in_window = gc.window.coordinates_end.x;
 
 		_Csize data_size = gl_data::data_content._data_x.size();
-		double data_first_value = gl_data::data_content._data_x[0];
-		double data_last_value = gl_data::data_content._data_x[data_size - 1];
+		_Acrd data_first_value = gl_data::data_content._data_x[0];
+		_Acrd data_last_value = gl_data::data_content._data_x[data_size - 1];
 
 		// if data in window
 		if ((data_last_value > first_abstruct_value_in_window) && (data_first_value < last_abstruct_value_in_window))
@@ -136,9 +131,9 @@ void paint_data(HDC& hMemDc)
 				end_index++;
 			}
 
-			double window_value_data_start = get_mouse_coordinate_x(x_values[start_index]);
-			double window_value_data_end = get_mouse_coordinate_x(x_values[end_index]);
-			double window_width = window_value_data_end - window_value_data_start;
+			_Wcrd window_value_data_start = get_window_coordinate_x(x_values[start_index]);
+			_Wcrd window_value_data_end = get_window_coordinate_x(x_values[end_index]);
+			_Wcrd window_width = window_value_data_end - window_value_data_start;
 
 			_Csize size_data_in_window = end_index - start_index;
 			double compressed_scale = size_data_in_window / window_width;
@@ -148,7 +143,6 @@ void paint_data(HDC& hMemDc)
 				paint_compressed_mode(hMemDc, x_values, y_values, start_index, end_index, compressed_scale);
 			else
 				paint_default_mode(hMemDc, x_values, y_values, start_index, end_index);
-
 		}
 	}
 }

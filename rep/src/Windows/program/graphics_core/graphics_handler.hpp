@@ -11,16 +11,30 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			if (gc.mouse.is_hold == true)
 				return 0;
 
+			if (key_is_active::ctrl && !key_is_active::shift)
+			{
+				gc.scales.total_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / GRAPHICS_CORE_WHEEL_FAST_DIVIDER;
+				gc.update_scale();
+				return 0;
+			}
+
 			if (key_is_active::shift)
 			{
-				gc.scales.width_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
-				gc.update_scale_w();
+				if (key_is_active::ctrl)
+				{
+					gc.scales.width_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / GRAPHICS_CORE_WHEEL_FAST_DIVIDER;
+					gc.update_scale_width();
+					return 0;
+				}
+
+				gc.scales.width_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / GRAPHICS_CORE_WHEEL_DEFAULT_DIVIDER;
+				gc.update_scale_width();
+				return 0;
 			}
-			else
-			{
-				gc.scales.total_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / 120.;
-				gc.update_scale();
-			}
+			
+			gc.scales.total_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / GRAPHICS_CORE_WHEEL_DEFAULT_DIVIDER;
+			gc.update_scale();
+			
 
 			return 0;
 		}
@@ -61,7 +75,7 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			gc.window.count_pixels.x = (rt.right - rt.left) - GRAPHICS_CORE_WINDOW_CORRECTION_WIDTH;
 			gc.window.count_pixels.y = (rt.bottom - rt.top) - GRAPHICS_CORE_WINDOW_CORRECTION_HEIGHT;
 
-			gc.update_expand_scale();
+			gc.update_stretching_scale();
 
 			return 0;
 		}
@@ -70,9 +84,17 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		{
 			switch (wParam)
 			{
-			case VK_SHIFT:
-				key_is_active::shift = true;
-				return 0;
+				case VK_SHIFT:
+				{
+					key_is_active::shift = true;
+					return 0;
+				}
+
+				case VK_CONTROL:
+				{
+					key_is_active::ctrl = true;
+					return 0;
+				}
 			}
 		}
 
@@ -80,9 +102,17 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 		{
 			switch (wParam)
 			{
-			case VK_SHIFT:
-				key_is_active::shift = false;
-				return 0;
+				case VK_SHIFT:
+				{
+					key_is_active::shift = false;
+					return 0;
+				}
+
+				case VK_CONTROL:
+				{
+					key_is_active::ctrl = false;
+					return 0;
+				}
 			}
 		}
 	}

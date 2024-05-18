@@ -41,7 +41,7 @@
     <ClInclude Include="..\..\src\Windows\display.hpp">
       <Filter>Windows</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\message_loop.hpp">
+    <ClInclude Include="..\..\src\Windows\winloop.hpp">
       <Filter>Windows</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\widgets\events.hpp">
@@ -62,7 +62,7 @@
     <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\paint_text.hpp">
       <Filter>Windows\program\graphics_core\methods</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\graphic_core.hpp">
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\graphics_handler.hpp">
       <Filter>Windows\program\graphics_core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\graphics_core\packs.hpp">

@@ -1,5 +1,5 @@
 #pragma once
-std::wstring double2string(double value)
+std::wstring double2wstring(double value)
 {
 	if (value == 0)
 		return std::to_wstring(0);
@@ -31,7 +31,7 @@ std::wstring double2string(double value)
 
 void paint_text(HDC& hMemDc, int x, int y, double value)
 {
-	std::wstring gl_wstr = double2string(value);
+	std::wstring gl_wstr = double2wstring(value);
 	TextOut(hMemDc, x, y, gl_wstr.c_str(), gl_wstr.size());
 }
 

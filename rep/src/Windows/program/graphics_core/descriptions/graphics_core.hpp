@@ -3,11 +3,27 @@
 #define GRAPHICS_CORE_WINDOW_START_X 0
 #define GRAPHICS_CORE_WINDOW_START_Y 0
 #define GRAPHICS_CORE_DEFAULT_TOTAL_SCALE 1
-#define GRAPHICS_CORE_DEFAULT_WIDTH_SCALE 1
+#define GRAPHICS_CORE_DEFAULT_WIDTH_SCALE 2
+#define GRAPHICS_CORE_COUNTER_SCALE_LIMIT 200
+#define GRAPHICS_CORE_WHEEL_FAST_DIVIDER 30.
+#define GRAPHICS_CORE_WHEEL_DEFAULT_DIVIDER 120.
 #define GRAPHICS_CORE_WINDOW_CORRECTION_WIDTH 16
 #define GRAPHICS_CORE_WINDOW_CORRECTION_HEIGHT 39
-#define GRAPHICS_CORE_DEFAULT_DISPLAY_LIMIT_Y 250
-#define GRAPHICS_CORE_DEFAULT_DISPLAY_LIMIT_X 250
+#define GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_Y 250
+#define GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_X 250
+#define GRAPHICS_CORE_UPDATE_TOTAL_SCALE 1.07
+#define GRAPHICS_CORE_UPDATE_WIDTH_SCALE 1.07
+
+
+// abstract coordination
+typedef double _Acrd;
+// window coordination
+typedef double _Wcrd;
+
+// content size
+typedef unsigned long long _Csize;
+// content index
+typedef unsigned long long _Cindx;
 
 struct _xy
 {
@@ -47,8 +63,8 @@ struct picture_settings
 	_xy offset_reference_point;
 };
 
-double get_abstract_coordinate_x(double);
-double get_abstract_coordinate_y(double);
+_Acrd get_abstract_coordinate_x(_Wcrd);
+_Acrd get_abstract_coordinate_y(_Wcrd);
 
 class graphics_core
 {
@@ -60,13 +76,13 @@ public:
 
 public:
 	void update_scale();
-	void update_scale_w();
+	void update_scale_width();
 	void update_reference_point();
 	void update_last_reference_point();
 	void update_hold();
 	void update_shift();
-	void update_expand_scale();
-	void update_workspace();
+	void update_stretching_scale();
+	void update_window();
 
 public:
 	double get_ref_x();
@@ -82,26 +98,32 @@ public:
 
 void graphics_core::update_scale()
 {
+	if (abs(scales.total_counter) > GRAPHICS_CORE_COUNTER_SCALE_LIMIT) 
+		scales.total_counter = GRAPHICS_CORE_COUNTER_SCALE_LIMIT* scales.total_counter/abs(scales.total_counter);
+
 	window.coordinates_limit.x /= scales.total;
 	window.coordinates_limit.y /= scales.total;
 
-	scales.total = 1. * pow(1.1, scales.total_counter);
+	scales.total = GRAPHICS_CORE_DEFAULT_TOTAL_SCALE * pow(GRAPHICS_CORE_UPDATE_TOTAL_SCALE, scales.total_counter);
 
 	window.coordinates_limit.x *= scales.total;
 	window.coordinates_limit.y *= scales.total;
 
-	update_expand_scale();
+	update_stretching_scale();
 }
 
-void graphics_core::update_scale_w()
+void graphics_core::update_scale_width()
 {
+	if (abs(scales.width_counter) > GRAPHICS_CORE_COUNTER_SCALE_LIMIT)
+		scales.width_counter = GRAPHICS_CORE_COUNTER_SCALE_LIMIT * scales.width_counter / abs(scales.width_counter);
+
 	window.coordinates_limit.x /= scales.width;
 
-	scales.width = 1. * pow(1.1, scales.width_counter);
+	scales.width = GRAPHICS_CORE_DEFAULT_WIDTH_SCALE * pow(GRAPHICS_CORE_UPDATE_WIDTH_SCALE, scales.width_counter);
 
 	window.coordinates_limit.x *= scales.width;
 
-	update_expand_scale();
+	update_stretching_scale();
 }
 
 void graphics_core::update_reference_point()
@@ -129,13 +151,13 @@ void graphics_core::update_shift()
 	picture.offset_reference_point.y = (mouse.current_position.y - mouse.hold_position.y) / scales.stretching.y;
 }
 
-void graphics_core::update_expand_scale()
+void graphics_core::update_stretching_scale()
 {
 	scales.stretching.x = window.count_pixels.x / window.coordinates_limit.x;
 	scales.stretching.y = window.count_pixels.y / window.coordinates_limit.y;
 }
 
-void graphics_core::update_workspace()
+void graphics_core::update_window()
 {
 	window.coordinates_begin.x = get_abstract_coordinate_x(GRAPHICS_CORE_WINDOW_START_X);
 	window.coordinates_begin.y = get_abstract_coordinate_y(GRAPHICS_CORE_WINDOW_START_Y);
@@ -168,34 +190,34 @@ void graphics_core::set_display_limit(double x_limit, double y_limit)
 
 graphics_core::graphics_core()
 {
-	window.coordinates_limit.x = GRAPHICS_CORE_DEFAULT_DISPLAY_LIMIT_X;
-	window.coordinates_limit.y = GRAPHICS_CORE_DEFAULT_DISPLAY_LIMIT_Y;
+	window.coordinates_limit.x = GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_X;
+	window.coordinates_limit.y = GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_Y;
 }
 
 graphics_core gc;
 
-//	mouse -> coord
-//	Transform mouse coordinates in abstract coordinates
+//	window -> abstract
+//	Transform window coordinates in abstract coordinates
 //	Reference_point - centre windows
-double get_abstract_coordinate_x(double pixel_x)
+inline _Acrd get_abstract_coordinate_x(_Wcrd pixel_x)
 {
 	return gc.picture.current_reference_point.x - gc.window.coordinates_limit.x / 2 + pixel_x / gc.scales.stretching.x;
 }
 
-double get_abstract_coordinate_y(double pixel_y)
+inline _Acrd get_abstract_coordinate_y(_Wcrd pixel_y)
 {
 	return gc.picture.current_reference_point.y + gc.window.coordinates_limit.y / 2 - pixel_y / gc.scales.stretching.y;
 }
 
-//	coord -> mouse
-//	Transform abstract coordinates in mouse coordinates 
+//	abstract -> window
+//	Transform abstract coordinates in window coordinates 
 //	Reference_point - centre windows
-double get_mouse_coordinate_x(double coordinate_x)
+inline _Wcrd get_window_coordinate_x(_Acrd coordinate_x)
 {
 	return (coordinate_x - gc.picture.current_reference_point.x + gc.window.coordinates_limit.x / 2) * gc.scales.stretching.x;
 }
 
-double get_mouse_coordinate_y(double coordinate_y)
+inline _Wcrd get_window_coordinate_y(_Acrd coordinate_y)
 {
 	return (-coordinate_y + gc.picture.current_reference_point.y + gc.window.coordinates_limit.y / 2) * gc.scales.stretching.y;
 }

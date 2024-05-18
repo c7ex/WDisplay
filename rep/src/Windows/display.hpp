@@ -3,24 +3,24 @@
  *                                     |                 |
  *                                  windows              |
  *                                                       |
- *                                          ______ message_loop ______
- *                                         |                          |
- *                                         |                          ^
- *                                         |                          ^
- *                                         |                          ^
- *                              _____ graphics_core __                ^
- *                             |                      |               ^
- *                   ______ packs _____               |               ^
- *                  |     |     |       |             |               ^
- *               string   |     |       |             |               ^   <- empty branch
- *                        |     |       |             |               ^
- *                     gl'pack  |       |             |               ^
- *                              |       |             |               ^
- *                            me'pack   |             |               ^
- *                                      |             |               ^
- *                                 description        |               ^
- *                                                    |               ^
- *                                                rendering           ^
+ *                                           ________ winloop ________
+ *                                          |                         |
+ *                                          |                         ^
+ *                                          |                         ^
+ *                                          |                         ^
+ *                            _____ graphics_handler __               ^
+ *                           |                         |              ^
+ *                    ______ packs _____               |              ^
+ *                   |     |     |       |             |              ^
+ *                string   |     |       |             |              ^   <- empty branch
+ *                         |     |       |             |              ^
+ *                      gl'pack  |       |             |              ^
+ *                               |       |             |              ^
+ *                             me'pack   |             |              ^
+ *                                       |             |              ^
+ *                                  description        |              ^
+ *                                                     |              ^
+ *                                                 rendering          ^
  *                                                                    |
  *                                                               __ widgets
  *                                                              |
@@ -29,7 +29,7 @@
 
 #pragma once
 #include<windows.h>
-#include"message_loop.hpp"
+#include"winloop.hpp"
 
 void WndExce(bool, LPCWSTR);
 

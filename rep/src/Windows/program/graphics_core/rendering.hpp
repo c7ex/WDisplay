@@ -6,7 +6,7 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 	HFONT hTmp = (HFONT)SelectObject(hMemDc, hFont);
 	SetBkMode(hMemDc, TRANSPARENT);
 
-	gc.update_workspace();
+	gc.update_window();
 
 	// Paint main background
 	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::brush.background));
@@ -22,9 +22,14 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 	// Paint main axis
 	paint_main_axis(hMemDc);
 
+	SetTextColor(hMemDc, stock_objects::color.red);
+	paint_text(hMemDc, 30, 30, L"Tcounter", gc.scales.total_counter);
+	paint_text(hMemDc, 30, 60, L"Wcounter", gc.scales.width_counter);
+
 	// Paint axis labels
 	hFont = CreateFont(16, 0, 0, 0, FW_BLACK, 0, 0, 0, 0, 0, 0, 2, 0, L"SYSTEM_FIXED_FONT");
 	hTmp = (HFONT)SelectObject(hMemDc, hFont);
+	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.labels_axis));
 	paint_supportive_axis_labels(hMemDc);
 
 	SelectObject(hMemDc, hFont);
