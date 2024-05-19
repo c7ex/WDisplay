@@ -3,28 +3,29 @@ namespace stock_objects
 {
 	struct
 	{
-		COLORREF white        = RGB(0xFF, 0xFF, 0xFF);
-		COLORREF black        = RGB(0x00, 0x00, 0x00);
-		COLORREF green        = RGB(0x00, 0xFF, 0x00);
-		COLORREF red          = RGB(0xFF, 0x00, 0x00);
-		COLORREF main_axis    = RGB(0xF5, 0xA5, 0x94);
-		COLORREF sup_axis     = RGB(0x15, 0x15, 0x14);
-		COLORREF labels_axis  = RGB(0xF5, 0x85, 0x85);
-		COLORREF data_style_1 = RGB(0x45, 0x05, 0x24);
+		COLORREF white          = RGB(0xFF, 0xFF, 0xFF);
+		COLORREF black          = RGB(0x00, 0x00, 0x00);
+		COLORREF green          = RGB(0x00, 0xFF, 0x00);
+		COLORREF red            = RGB(0xFF, 0x00, 0x00);
+		COLORREF bound          = RGB(0x0E, 0x0E, 0x0E);
+		COLORREF plot           = RGB(0x0E, 0x1A, 0x0E);
+		COLORREF sup_axis       = RGB(0x35, 0x35, 0x35);
+		COLORREF labels_axis    = RGB(0x85, 0x75, 0x55);
+		COLORREF data_style_1   = RGB(0x45, 0x75, 0x24);
 	} color;
 	
 	struct
 	{
-		HPEN background   = CreatePen(PS_SOLID, 1, color.black);
-		HPEN main_axis    = CreatePen(PS_SOLID, 1, color.main_axis);
-		HPEN sup_axis     = CreatePen(PS_SOLID, 1, color.sup_axis);
-		HPEN labels_axis  = CreatePen(PS_SOLID, 1, color.labels_axis);
-		HPEN data_style_1 = CreatePen(PS_SOLID, 3, color.data_style_1);
+		HPEN bound              = CreatePen(PS_SOLID, 1, color.bound);
+		HPEN sup_axis           = CreatePen(PS_SOLID, 1, color.sup_axis);
+		HPEN labels_axis        = CreatePen(PS_SOLID, 1, color.labels_axis);
+		HPEN data_style_1       = CreatePen(PS_SOLID, 3, color.data_style_1);
 	} pen;
 
 	struct
 	{
-		HBRUSH background = CreateSolidBrush(color.black);
+		HBRUSH plot             = CreateSolidBrush(color.plot);
+		HBRUSH bound            = CreateSolidBrush(color.bound);
 	} brush;
 }
 
@@ -44,3 +45,6 @@ namespace gl_data
 {
 	content data_content;
 }
+
+bool FullScreen = false;
+WINDOWPLACEMENT wpc;

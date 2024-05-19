@@ -22,7 +22,7 @@ int main()
 		data_y[i] = /*amplitude * sin((double)i / tau) / ((double)i / tau) +*/ law(gen);
 	}
 
-	display.set_display_limit(size, amplitude);
+	display.set_display_limit(100, 100);
 	display.load_data(data_x, data_y);
 	display.run();
 

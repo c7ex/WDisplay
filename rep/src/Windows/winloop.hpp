@@ -8,6 +8,13 @@ LRESULT CALLBACK MainMessageHandler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 {
 	switch (message)
 	{
+		case WM_GETMINMAXINFO:
+		{
+			LPMINMAXINFO lpMMI = (LPMINMAXINFO)lParam;
+			lpMMI->ptMinTrackSize.x = 300;
+			lpMMI->ptMinTrackSize.y = 300;
+		}
+
 		case WM_CREATE:
 		{
 			CreateWidgets(hWnd, message, wParam, lParam);

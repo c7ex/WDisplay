@@ -1,19 +1,31 @@
 #pragma once
 #define GRAPHICS_CORE_INIT_ZERO 0
-#define GRAPHICS_CORE_WINDOW_START_X 0
-#define GRAPHICS_CORE_WINDOW_START_Y 0
-#define GRAPHICS_CORE_DEFAULT_TOTAL_SCALE 1
-#define GRAPHICS_CORE_DEFAULT_WIDTH_SCALE 2
-#define GRAPHICS_CORE_COUNTER_SCALE_LIMIT 200
-#define GRAPHICS_CORE_WHEEL_FAST_DIVIDER 30.
-#define GRAPHICS_CORE_WHEEL_DEFAULT_DIVIDER 120.
-#define GRAPHICS_CORE_WINDOW_CORRECTION_WIDTH 16
-#define GRAPHICS_CORE_WINDOW_CORRECTION_HEIGHT 39
+
+#define GRAPHICS_CORE_WINDOW_BACKLASH_START_X 0
+#define GRAPHICS_CORE_WINDOW_BACKLASH_START_Y 0
+#define GRAPHICS_CORE_WINDOW_BACKLASH_END_X 16
+#define GRAPHICS_CORE_WINDOW_BACKLASH_END_Y 39
 #define GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_Y 250
 #define GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_X 250
+
+#define GRAPHICS_CORE_DEFAULT_TOTAL_SCALE 1
+#define GRAPHICS_CORE_DEFAULT_WIDTH_SCALE 2
 #define GRAPHICS_CORE_UPDATE_TOTAL_SCALE 1.07
 #define GRAPHICS_CORE_UPDATE_WIDTH_SCALE 1.07
+#define GRAPHICS_CORE_COUNTER_SCALE_LIMIT 200
 
+#define GRAPHICS_CORE_WHEEL_FAST_DIVIDER 30.
+#define GRAPHICS_CORE_WHEEL_DEFAULT_DIVIDER 120.
+
+#define GRAPH_SCALE  20.
+#define GRAPH_PRT_X  1.
+#define GRAPH_PRT_Y  0.7
+#define GRAPH_BGN_X (GRAPH_PRT_X / GRAPH_SCALE)
+#define GRAPH_BGN_Y (GRAPH_PRT_Y / GRAPH_SCALE)
+#define GRAPH_END_X (GRAPH_SCALE - GRAPH_PRT_X) / GRAPH_SCALE
+#define GRAPH_END_Y (GRAPH_SCALE - GRAPH_PRT_Y) / GRAPH_SCALE
+#define GRAPH_COR_X (1. - 2 * GRAPH_BGN_X)
+#define GRAPH_COR_Y (1. - 2 * GRAPH_BGN_Y)
 
 // abstract coordination
 typedef double _Acrd;
@@ -159,8 +171,8 @@ void graphics_core::update_stretching_scale()
 
 void graphics_core::update_window()
 {
-	window.coordinates_begin.x = get_abstract_coordinate_x(GRAPHICS_CORE_WINDOW_START_X);
-	window.coordinates_begin.y = get_abstract_coordinate_y(GRAPHICS_CORE_WINDOW_START_Y);
+	window.coordinates_begin.x = get_abstract_coordinate_x(GRAPHICS_CORE_WINDOW_BACKLASH_START_X);
+	window.coordinates_begin.y = get_abstract_coordinate_y(GRAPHICS_CORE_WINDOW_BACKLASH_START_Y);
 
 	window.coordinates_end.x = get_abstract_coordinate_x(window.count_pixels.x);
 	window.coordinates_end.y = get_abstract_coordinate_y(window.count_pixels.y);
@@ -184,8 +196,8 @@ void graphics_core::set_reference_point(double x_reference, double y_reference)
 
 void graphics_core::set_display_limit(double x_limit, double y_limit)
 {
-	window.coordinates_limit.x = x_limit * scales.total;
-	window.coordinates_limit.y = y_limit * scales.total;
+	window.coordinates_limit.x = x_limit * scales.total / GRAPH_COR_X;
+	window.coordinates_limit.y = y_limit * scales.total / GRAPH_COR_Y;
 }
 
 graphics_core::graphics_core()

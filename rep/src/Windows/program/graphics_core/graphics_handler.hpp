@@ -72,8 +72,8 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			RECT rt;
 			GetWindowRect(hWnd, &rt);
 
-			gc.window.count_pixels.x = (rt.right - rt.left) - GRAPHICS_CORE_WINDOW_CORRECTION_WIDTH;
-			gc.window.count_pixels.y = (rt.bottom - rt.top) - GRAPHICS_CORE_WINDOW_CORRECTION_HEIGHT;
+			gc.window.count_pixels.x = (rt.right - rt.left) - GRAPHICS_CORE_WINDOW_BACKLASH_END_X;
+			gc.window.count_pixels.y = (rt.bottom - rt.top) - GRAPHICS_CORE_WINDOW_BACKLASH_END_Y;
 
 			gc.update_stretching_scale();
 

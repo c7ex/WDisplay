@@ -1,7 +1,7 @@
 #pragma once
 #define ZEROVALUE 0
 #define BASELOG10 10
-#define SIZE_FOR_HORIZONTAL_TIES 4
+#define SIZE_FOR_HORIZONTAL_TIES 6
 #define SIZE_FOR_VERTICAL_TIES 6
 
 #define SUPPORTIVE_AXIS_MIN 12.
@@ -32,25 +32,36 @@ double get_discretization_supportive_axis(_Acrd limit)
 	return discretization;
 }
 
-void paint_once_supportive_axis_label(HDC& hMemDc, _Acrd x, _Acrd y, double value)
+void paint_once_horizontal_supportive_axis_label(HDC& hMemDc, _Acrd x, _Acrd y, double value)
 {
-	if (value == ZEROVALUE) return;
-
-	_Wcrd coordinate_x = get_window_coordinate_x(x)+5;
+	_Wcrd coordinate_x = get_window_coordinate_x(x) + 5;
 
 	if (coordinate_x < SUPPORTIVE_AXIS_BACKLASH_START)
 		coordinate_x = SUPPORTIVE_AXIS_BACKLASH_START;
 	else if (coordinate_x > gc.window.count_pixels.x - SUPPORTIVE_AXIS_BACKLASH_END)
 		coordinate_x = gc.window.count_pixels.x - SUPPORTIVE_AXIS_BACKLASH_END;
 
-	_Wcrd coordinate_y = get_window_coordinate_y(y)+5;
+	_Wcrd coordinate_y = gc.window.count_pixels.y * (GRAPH_END_Y*1.007);
+
+	if (   (coordinate_x > gc.window.count_pixels.x * GRAPH_BGN_X + 15)
+		&& (coordinate_x < gc.window.count_pixels.x * GRAPH_END_X - 25))
+		paint_text(hMemDc, coordinate_x, coordinate_y, value);
+}
+
+void paint_once_vertical_supportive_axis_label(HDC& hMemDc, _Acrd x, _Acrd y, double value)
+{
+	_Wcrd coordinate_y = get_window_coordinate_y(y)-8;
 
 	if (coordinate_y < SUPPORTIVE_AXIS_BACKLASH_START)
 		coordinate_y = SUPPORTIVE_AXIS_BACKLASH_START;
 	else if (coordinate_y > gc.window.count_pixels.y - SUPPORTIVE_AXIS_BACKLASH_END)
 		coordinate_y = gc.window.count_pixels.y - SUPPORTIVE_AXIS_BACKLASH_END;
 
-	paint_text(hMemDc, coordinate_x, coordinate_y, value);
+	_Wcrd coordinate_x = gc.window.count_pixels.x * (GRAPH_BGN_X/2);
+
+	if (   (coordinate_y > gc.window.count_pixels.y * GRAPH_BGN_Y)
+		&& (coordinate_y < gc.window.count_pixels.y * GRAPH_END_Y - 8))
+		paint_text(hMemDc, coordinate_x, coordinate_y, value);
 }
 
 void paint_once_horizontal_axis(HDC& hMemDc, _Acrd y)
@@ -70,30 +81,27 @@ void paint_once_vertical_axis(HDC& hMemDc, _Acrd x)
 void paint_once_ties_on_horizontal_axis(HDC& hMemDc, _Acrd x, _Acrd y, double value)
 {
 	_Wcrd coordinate_x = get_window_coordinate_x(x);
-	_Wcrd coordinate_y = get_window_coordinate_y(y);
+	_Wcrd coordinate_y = gc.window.count_pixels.y * GRAPH_END_Y;
 
 	_Wcrd begin_point_for_vertical_ties = coordinate_y - SIZE_FOR_VERTICAL_TIES;
-	_Wcrd end_point_for_vertical_ties = coordinate_y + SIZE_FOR_VERTICAL_TIES;
+	_Wcrd end_point_for_vertical_ties = coordinate_y;// + SIZE_FOR_VERTICAL_TIES;
 
-	paint_line(hMemDc, coordinate_x, begin_point_for_vertical_ties, coordinate_x, end_point_for_vertical_ties);
+	if (   (coordinate_x > gc.window.count_pixels.x * GRAPH_BGN_X)
+		&& (coordinate_x < gc.window.count_pixels.x * GRAPH_END_X))
+		paint_line(hMemDc, coordinate_x, begin_point_for_vertical_ties, coordinate_x, end_point_for_vertical_ties);
 }
 
 void paint_once_ties_on_vertical_axis(HDC& hMemDc, _Acrd x, _Acrd y, double value)
 {
-	_Wcrd coordinate_x = get_window_coordinate_x(x);
+	_Wcrd coordinate_x = gc.window.count_pixels.x * GRAPH_BGN_X;
 	_Wcrd coordinate_y = get_window_coordinate_y(y);
 
-	_Wcrd begin_point_for_horizontal_ties = coordinate_x - SIZE_FOR_HORIZONTAL_TIES;
+	_Wcrd begin_point_for_horizontal_ties = coordinate_x;// -SIZE_FOR_HORIZONTAL_TIES;
 	_Wcrd end_point_for_horizontal_ties = coordinate_x + SIZE_FOR_HORIZONTAL_TIES;
 
-	paint_line(hMemDc, begin_point_for_horizontal_ties, coordinate_y, end_point_for_horizontal_ties, coordinate_y);
-}
-
-void paint_main_axis(HDC& hMemDc)
-{
-	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.main_axis));
-	paint_once_horizontal_axis(hMemDc, ZEROVALUE);
-	paint_once_vertical_axis(hMemDc, ZEROVALUE);
+	if ((coordinate_y > gc.window.count_pixels.y * GRAPH_BGN_Y)
+		&& (coordinate_y < gc.window.count_pixels.y * GRAPH_END_Y))
+		paint_line(hMemDc, begin_point_for_horizontal_ties, coordinate_y, end_point_for_horizontal_ties, coordinate_y);
 }
 
 void paint_supportive_axis(HDC& hMemDc)
@@ -133,14 +141,14 @@ void paint_supportive_axis_labels(HDC& hMemDc)
 
 	while (round_count_x * discret_x <= gc.window.coordinates_end.x)
 	{
-		paint_once_supportive_axis_label(hMemDc, round_count_x * discret_x, ZEROVALUE, round_count_x * discret_x);
+		paint_once_horizontal_supportive_axis_label(hMemDc, round_count_x * discret_x, ZEROVALUE, round_count_x * discret_x);
 		paint_once_ties_on_horizontal_axis(hMemDc, round_count_x * discret_x, ZEROVALUE, round_count_x * discret_x);
 		round_count_x++;
 	}
 
 	while (round_count_y * discret_y <= gc.window.coordinates_begin.y)
 	{
-		paint_once_supportive_axis_label(hMemDc, ZEROVALUE, round_count_y * discret_y, round_count_y * discret_y);
+		paint_once_vertical_supportive_axis_label(hMemDc, ZEROVALUE, round_count_y * discret_y, round_count_y * discret_y);
 		paint_once_ties_on_vertical_axis(hMemDc, ZEROVALUE, round_count_y * discret_y, round_count_y * discret_y);
 		round_count_y++;
 	}
