@@ -19,7 +19,8 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 
 	// Paint graphs
 	paint_data(hMemDc);
-
+	
+	// Paint bound
 	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.bound));
 	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::brush.bound));
 	Rectangle(hMemDc, 0, 0, gc.window.count_pixels.x, gc.window.count_pixels.y * GRAPH_BGN_Y);
@@ -29,11 +30,14 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 
 	// Paint axis labels
 	SetTextAlign(hMemDc, TA_CENTER);
-	//std::cout << gc.window.count_pixels.x << std::endl;
-	hFont = CreateFont((sqrt(1.3*gc.window.count_pixels.x)/2.6), 0, 0, 0, FW_BLACK, 0, 0, 0, 0, 0, 0, 2, 0, L"SYSTEM_FIXED_FONT");
+	hFont = CreateFont((sqrt(1.3*gc.window.count_pixels.x)/2.6), 0, 0, 0, FW_BLACK, 0, 0, 0, 0, 0, 0, 2, FF_DECORATIVE, L"SYSTEM_FIXED_FONT");
 	hTmp = (HFONT)SelectObject(hMemDc, hFont);
 	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.labels_axis));
 	paint_supportive_axis_labels(hMemDc);
+
+	//paint_text(hMemDc, 150, 100, L"x: ", int(gc.scales.labels_order.x));
+	//paint_text(hMemDc, 150, 130, L"y: ", int(gc.scales.labels_order.y));
+
 
 	SelectObject(hMemDc, hFont);
 	DeleteObject(hFont);
@@ -43,6 +47,8 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 
 LRESULT rendering(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
+	//auto startTime = std::chrono::high_resolution_clock::now();
+
 	HDC          hMemDc;
 	HBITMAP      hMemBmp;
 	PAINTSTRUCT  ps;
@@ -69,6 +75,10 @@ LRESULT rendering(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	DeleteObject(hMemBmp);
 
 	EndPaint(hWnd, &ps);
+
+	//auto endTime = std::chrono::high_resolution_clock::now();
+	//std::chrono::duration<double> Time = endTime - startTime;
+	//std::cout << std::endl << "paint_compressed_mode: " << Time.count() << " s" << std::endl;
 
 	return 0;
 }

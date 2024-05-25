@@ -41,7 +41,7 @@ void paint_once_horizontal_supportive_axis_label(HDC& hMemDc, _Acrd x, _Acrd y, 
 	else if (coordinate_x > gc.window.count_pixels.x - SUPPORTIVE_AXIS_BACKLASH_END)
 		coordinate_x = gc.window.count_pixels.x - SUPPORTIVE_AXIS_BACKLASH_END;
 
-	_Wcrd coordinate_y = gc.window.count_pixels.y * (GRAPH_END_Y*1.007);
+	_Wcrd coordinate_y = gc.window.count_pixels.y * (GRAPH_END_Y*1.01);
 
 	if (   (coordinate_x > gc.window.count_pixels.x * GRAPH_BGN_X + 15)
 		&& (coordinate_x < gc.window.count_pixels.x * GRAPH_END_X - 25))

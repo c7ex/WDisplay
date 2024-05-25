@@ -122,8 +122,8 @@ public:
 	}
 
 public:
-	void load_data(std::vector<double>& data_x, std::vector<double>& data_y)
+	void load_data(std::vector<double>& data)
 	{
-		gl_data::data_content.set(data_x, data_y);
+		gl_data::content_seod.set(data);
 	}
 };

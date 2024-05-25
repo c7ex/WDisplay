@@ -1,6 +1,8 @@
 #pragma once
-std::wstring double2wstring(double value)
+std::wstring double2wstring(double value, double norm = 3)
 {
+	//value /= (double)pow(10, (int(norm)-3));
+
 	if (value == 0)
 		return std::to_wstring(0);
 

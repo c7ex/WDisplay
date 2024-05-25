@@ -38,12 +38,12 @@ namespace key_is_active
 namespace gl_timer
 {
 	size_t main_id = 0;
-	size_t main_interval = USER_TIMER_MINIMUM;
+	size_t main_interval = 2*USER_TIMER_MINIMUM;
 }
 
 namespace gl_data
 {
-	content data_content;
+	seod content_seod;
 }
 
 bool FullScreen = false;
