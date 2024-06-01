@@ -72,7 +72,7 @@ int WINAPI WinMain(
 	WndExce(!hWnd, TEXT("CreateWindowEx failed!"));
 
 	// Create General Timer
-	SetTimer(hWnd, gl_timer::main_id, gl_timer::main_interval, NULL);
+	SetTimer(hWnd, main_timer::id, main_timer::interval, NULL);
 
 	// Main loop window 
 	MSG message{};
@@ -83,7 +83,7 @@ int WINAPI WinMain(
 	}
 
 	// Delete General Timer
-	KillTimer(hWnd, gl_timer::main_id);
+	KillTimer(hWnd, main_timer::id);
 
 	return 0;
 }
@@ -113,17 +113,5 @@ public:
 	void run()
 	{
 		WinMain(arg_hInstance,arg_hPrevInstance,arg_lpCmdLine,arg_nCmdShow);
-	}
-
-public:
-	void set_display_limit(double limit_x, double limit_y)
-	{
-		gc.set_display_limit(limit_x, limit_y);
-	}
-
-public:
-	void load_data(std::vector<double>& data)
-	{
-		gl_data::content_seod.set(data);
 	}
 };

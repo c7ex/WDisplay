@@ -1,5 +1,11 @@
 #pragma once
 
+void paint_line(HDC& hMemDc, int x0, int y0, int x1, int y1)
+{
+	MoveToEx(hMemDc, x0, y0, NULL);
+	LineTo(hMemDc, x1, y1);
+}
+
 // graphic core update
 void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& hMemDc,HBITMAP& hMemBmp)
 {
@@ -7,37 +13,7 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 	HFONT hTmp = (HFONT)SelectObject(hMemDc, hFont);
 	SetBkMode(hMemDc, TRANSPARENT);
 
-	gc.update_window();
-
-	// Paint main background
-	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::brush.plot));
-	Rectangle(hMemDc, 0, 0, gc.window.count_pixels.x, gc.window.count_pixels.y);
-
-	// Paint supportive axis
-	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.sup_axis));
-	paint_supportive_axis(hMemDc);
-
-	// Paint graphs
-	paint_data(hMemDc);
-	
-	// Paint bound
-	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.bound));
-	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::brush.bound));
-	Rectangle(hMemDc, 0, 0, gc.window.count_pixels.x, gc.window.count_pixels.y * GRAPH_BGN_Y);
-	Rectangle(hMemDc, 0, gc.window.count_pixels.y * GRAPH_END_Y, gc.window.count_pixels.x, gc.window.count_pixels.y);
-	Rectangle(hMemDc, 0, 0, gc.window.count_pixels.x * GRAPH_BGN_X, gc.window.count_pixels.y);
-	Rectangle(hMemDc, gc.window.count_pixels.x * GRAPH_END_X, 0, gc.window.count_pixels.x, gc.window.count_pixels.y);
-
-	// Paint axis labels
-	SetTextAlign(hMemDc, TA_CENTER);
-	hFont = CreateFont((sqrt(1.3*gc.window.count_pixels.x)/2.6), 0, 0, 0, FW_BLACK, 0, 0, 0, 0, 0, 0, 2, FF_DECORATIVE, L"SYSTEM_FIXED_FONT");
-	hTmp = (HFONT)SelectObject(hMemDc, hFont);
-	SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.labels_axis));
-	paint_supportive_axis_labels(hMemDc);
-
-	//paint_text(hMemDc, 150, 100, L"x: ", int(gc.scales.labels_order.x));
-	//paint_text(hMemDc, 150, 130, L"y: ", int(gc.scales.labels_order.y));
-
+	//SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.white));
 
 	SelectObject(hMemDc, hFont);
 	DeleteObject(hFont);

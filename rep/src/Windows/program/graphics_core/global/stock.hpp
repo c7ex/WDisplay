@@ -1,4 +1,5 @@
 #pragma once
+
 namespace stock_objects
 {
 	struct
@@ -16,6 +17,7 @@ namespace stock_objects
 	
 	struct
 	{
+		HPEN white              = CreatePen(PS_SOLID, 1, color.white);
 		HPEN bound              = CreatePen(PS_SOLID, 1, color.bound);
 		HPEN sup_axis           = CreatePen(PS_SOLID, 1, color.sup_axis);
 		HPEN labels_axis        = CreatePen(PS_SOLID, 1, color.labels_axis);
@@ -28,23 +30,3 @@ namespace stock_objects
 		HBRUSH bound            = CreateSolidBrush(color.bound);
 	} brush;
 }
-
-namespace key_is_active
-{
-	bool shift;
-	bool ctrl;
-}
-
-namespace gl_timer
-{
-	size_t main_id = 0;
-	size_t main_interval = 2*USER_TIMER_MINIMUM;
-}
-
-namespace gl_data
-{
-	seod content_seod;
-}
-
-bool FullScreen = false;
-WINDOWPLACEMENT wpc;

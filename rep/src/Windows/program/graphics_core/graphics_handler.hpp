@@ -11,16 +11,16 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			if (gc.mouse.is_hold == true)
 				return 0;
 
-			if (key_is_active::ctrl && !key_is_active::shift)
+			if (keys::ctrl && !keys::shift)
 			{
 				gc.scales.total_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / GRAPHICS_CORE_WHEEL_FAST_DIVIDER;
 				gc.update_scale();
 				return 0;
 			}
 
-			if (key_is_active::shift)
+			if (keys::shift)
 			{
-				if (key_is_active::ctrl)
+				if (keys::ctrl)
 				{
 					gc.scales.width_counter -= GET_WHEEL_DELTA_WPARAM(wParam) / GRAPHICS_CORE_WHEEL_FAST_DIVIDER;
 					gc.update_scale_width();
@@ -86,13 +86,13 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			{
 				case VK_SHIFT:
 				{
-					key_is_active::shift = true;
+					keys::shift = true;
 					return 0;
 				}
 
 				case VK_CONTROL:
 				{
-					key_is_active::ctrl = true;
+					keys::ctrl = true;
 					return 0;
 				}
 			}
@@ -104,13 +104,13 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			{
 				case VK_SHIFT:
 				{
-					key_is_active::shift = false;
+					keys::shift = false;
 					return 0;
 				}
 
 				case VK_CONTROL:
 				{
-					key_is_active::ctrl = false;
+					keys::ctrl = false;
 					return 0;
 				}
 			}

@@ -1,4 +1,30 @@
 #pragma once
+
+// rules:
+// scales - scroll
+// moving - mouse
+
+
+
+// // // // // // // // //      main timer     // // // // // // // // // //
+
+namespace main_timer
+{
+	size_t id = 0;
+	size_t interval = 2 * USER_TIMER_MINIMUM;
+}
+
+
+
+// // // // // // // // //         keys        // // // // // // // // // //
+
+namespace keys
+{
+	bool shift;
+	bool ctrl;
+}
+
+
 #define GRAPHICS_CORE_INIT_ZERO 0
 
 #define GRAPHICS_CORE_WINDOW_BACKLASH_START_X 0
@@ -16,16 +42,6 @@
 
 #define GRAPHICS_CORE_WHEEL_FAST_DIVIDER 30.
 #define GRAPHICS_CORE_WHEEL_DEFAULT_DIVIDER 120.
-
-#define GRAPH_SCALE  20.
-#define GRAPH_PRT_X  1.1
-#define GRAPH_PRT_Y  0.8
-#define GRAPH_BGN_X (GRAPH_PRT_X / GRAPH_SCALE)
-#define GRAPH_BGN_Y (GRAPH_PRT_Y / GRAPH_SCALE)
-#define GRAPH_END_X (GRAPH_SCALE - GRAPH_PRT_X) / GRAPH_SCALE
-#define GRAPH_END_Y (GRAPH_SCALE - GRAPH_PRT_Y) / GRAPH_SCALE
-#define GRAPH_COR_X (1. - 2 * GRAPH_BGN_X)
-#define GRAPH_COR_Y (1. - 2 * GRAPH_BGN_Y)
 
 // abstract coordination
 typedef double _Acrd;
@@ -196,8 +212,8 @@ void graphics_core::set_reference_point(double x_reference, double y_reference)
 
 void graphics_core::set_display_limit(double x_limit, double y_limit)
 {
-	window.coordinates_limit.x = x_limit * scales.total / GRAPH_COR_X;
-	window.coordinates_limit.y = y_limit * scales.total / GRAPH_COR_Y;
+	// window.coordinates_limit.x = x_limit * scales.total / GRAPH_COR_X;
+	// window.coordinates_limit.y = y_limit * scales.total / GRAPH_COR_Y;
 }
 
 graphics_core::graphics_core()

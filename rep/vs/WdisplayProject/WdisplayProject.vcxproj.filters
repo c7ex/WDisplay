@@ -25,9 +25,6 @@
     <Filter Include="Windows\program\graphics_core\global">
       <UniqueIdentifier>{bcfc5c8d-acd7-403c-bd70-5f92b242e330}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Windows\program\graphics_core\methods">
-      <UniqueIdentifier>{839b5af4-4b72-4101-aebf-792fc27344f1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Windows\program\graphics_core\descriptions">
       <UniqueIdentifier>{85775084-b732-4e08-bdcb-bfecd10b1c80}</UniqueIdentifier>
     </Filter>
@@ -53,15 +50,6 @@
     <ClInclude Include="..\..\src\Windows\program\graphics_core\global\stock.hpp">
       <Filter>Windows\program\graphics_core\global</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\widgets.hpp">
-      <Filter>Windows\program\graphics_core\global</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\paint_line.hpp">
-      <Filter>Windows\program\graphics_core\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\paint_text.hpp">
-      <Filter>Windows\program\graphics_core\methods</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\graphics_core\graphics_handler.hpp">
       <Filter>Windows\program\graphics_core</Filter>
     </ClInclude>
@@ -71,17 +59,8 @@
     <ClInclude Include="..\..\src\Windows\program\graphics_core\rendering.hpp">
       <Filter>Windows\program\graphics_core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\descriptions\content.hpp">
-      <Filter>Windows\program\graphics_core\descriptions</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\graphics_core\descriptions\graphics_core.hpp">
       <Filter>Windows\program\graphics_core\descriptions</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\paint_axis.hpp">
-      <Filter>Windows\program\graphics_core\methods</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\methods\paint_data.hpp">
-      <Filter>Windows\program\graphics_core\methods</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

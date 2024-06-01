@@ -1,3 +1,0 @@
-// Widgets for create form
-// ...
-// empty

@@ -22,8 +22,6 @@ int main()
 		            amplitude * amplitude * cos(double(i + law(gen)) / (tau * tau)) +
 		            amplitude * sin(double(i + law(gen))/tau);
 
-	display.set_display_limit(size, amplitude);
-	display.load_data(data_y);
 	display.run();
 
 	return 0;
