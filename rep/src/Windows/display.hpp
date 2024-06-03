@@ -63,8 +63,8 @@ int WINAPI WinMain(
 		WS_VISIBLE | WS_OVERLAPPEDWINDOW,
 		10,
 		10,
-		400,
-		400,
+		DEFAULT_SIZE_WINDOW_X,
+		DEFAULT_SIZE_WINDOW_Y,
 		NULL,
 		NULL,
 		wcex.hInstance,
@@ -72,7 +72,7 @@ int WINAPI WinMain(
 	WndExce(!hWnd, TEXT("CreateWindowEx failed!"));
 
 	// Create General Timer
-	SetTimer(hWnd, main_timer::id, main_timer::interval, NULL);
+	SetTimer(hWnd, (UINT_PTR)main_timer::id, (UINT)main_timer::interval, NULL);
 
 	// Main loop window 
 	MSG message{};

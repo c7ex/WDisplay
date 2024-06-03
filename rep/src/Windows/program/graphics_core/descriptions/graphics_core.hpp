@@ -24,228 +24,166 @@ namespace keys
 	bool ctrl;
 }
 
-
-#define GRAPHICS_CORE_INIT_ZERO 0
-
-#define GRAPHICS_CORE_WINDOW_BACKLASH_START_X 0
-#define GRAPHICS_CORE_WINDOW_BACKLASH_START_Y 0
-#define GRAPHICS_CORE_WINDOW_BACKLASH_END_X 16
-#define GRAPHICS_CORE_WINDOW_BACKLASH_END_Y 39
-#define GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_Y 250
-#define GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_X 250
-
-#define GRAPHICS_CORE_DEFAULT_TOTAL_SCALE 1
-#define GRAPHICS_CORE_DEFAULT_WIDTH_SCALE 2
-#define GRAPHICS_CORE_UPDATE_TOTAL_SCALE 1.07
-#define GRAPHICS_CORE_UPDATE_WIDTH_SCALE 1.07
-#define GRAPHICS_CORE_COUNTER_SCALE_LIMIT 200
-
-#define GRAPHICS_CORE_WHEEL_FAST_DIVIDER 30.
-#define GRAPHICS_CORE_WHEEL_DEFAULT_DIVIDER 120.
-
-// abstract coordination
-typedef double _Acrd;
-// window coordination
-typedef double _Wcrd;
-
-// content size
-typedef unsigned long long _Csize;
-// content index
-typedef unsigned long long _Cindx;
-
+// point
 struct _xy
 {
-	double x, y = GRAPHICS_CORE_INIT_ZERO;
+	double x, y = 0;
+
+	void set(double new_x, double new_y)
+	{
+		x = new_x;
+		y = new_y;
+	}
+
+	void set(_xy& other)
+	{
+		x = other.x;
+		y = other.y;
+	}
+
+	void set_end(_xy start, _xy size)
+	{
+		x = start.x + size.x;
+		y = start.y + size.y;
+	}
+
+	void set_middle(_xy start, _xy size)
+	{
+		x = start.x + size.x/2;
+		y = start.y + size.y/2;
+	}
+
+	_xy(double new_x, double new_y)
+	{
+		x = new_x;
+		y = new_y;
+	}
+
+	_xy(void) { x, y = 0; }
 };
 
-struct scales_settings
+// point form-proportion
+struct _fxy
 {
-	double total = GRAPHICS_CORE_DEFAULT_TOTAL_SCALE;
-	double total_counter = GRAPHICS_CORE_INIT_ZERO;
+	_xy cur;
+	_xy ref;
 
-	double width = GRAPHICS_CORE_DEFAULT_WIDTH_SCALE;
-	double width_counter = GRAPHICS_CORE_INIT_ZERO;
+	void set(_xy ref_init)
+	{
+		cur.set(ref_init);
+		ref.set(ref_init);
+	}
 
-	_xy stretching;
+	void refresh(_xy& new_scales)
+	{
+		cur.set(
+			ref.x * new_scales.x,
+			ref.y * new_scales.y);
+	}
 };
 
-struct window_settings
+// form proportion rect
+struct _frect
 {
-	_xy coordinates_begin;
-	_xy coordinates_end;
-	_xy coordinates_limit;
-	_xy count_pixels;
+	_fxy start;
+	_fxy size;
+	_xy end;
+	_xy middle;
+
+	void update(_xy& compression)
+	{
+		start.refresh(compression);
+		size.refresh(compression);
+		end.set_end(start.cur, size.cur);
+		middle.set_middle(start.cur, size.cur);
+	}
+
+	void paint(HDC& hMemDc)
+	{
+		Rectangle(hMemDc,
+			(int)start.cur.x,
+			(int)start.cur.y,
+			(int)end.x,
+			(int)end.y);
+	}
+
+	void set(_xy init_start, _xy init_size)
+	{
+		start.set(init_start);
+		size.set(init_size);
+		end.set_end(init_start, init_size);
+		middle.set_middle(init_start, init_size);
+	}
 };
 
-struct mouse_settings
+#define DEFAULT_SIZE_WINDOW_X 400
+#define DEFAULT_SIZE_WINDOW_Y 400
+
+#define CHART_START_POINT _xy(30,20)
+#define CHART_SIZE        _xy(300,350)
+
+struct wdisplay
 {
-	_xy current_position;
-	_xy hold_position;
-	bool is_hold = false;
-};
+	_xy window_size_in_pixels;
+	_xy window_mouse_position_in_pixels;
+	_xy compression_factors;
 
-struct picture_settings
-{
-	_xy current_reference_point;
-	_xy last_reference_point;
-	_xy offset_reference_point;
-};
+	struct chart
+	{
+		_frect plot;
+		_frect bound[4];
 
-_Acrd get_abstract_coordinate_x(_Wcrd);
-_Acrd get_abstract_coordinate_y(_Wcrd);
+		void paint_chart(HDC& hMemDc, HPEN& pen, HBRUSH& brush, HPEN& bpen, HBRUSH& bbrush)
+		{
+			SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(pen));
+			SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(brush));
+			plot.paint(hMemDc);
 
-class graphics_core
-{
-public:
-	scales_settings scales;
-	window_settings window;
-	mouse_settings mouse;
-	picture_settings picture;
+			SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(bpen));
+			SelectObject(hMemDc, reinterpret_cast<HGDIOBJ>(bbrush));
+			bound[0].paint(hMemDc);
+			bound[1].paint(hMemDc);
+			bound[2].paint(hMemDc);
+			bound[3].paint(hMemDc);
+		}
 
-public:
-	void update_scale();
-	void update_scale_width();
-	void update_reference_point();
-	void update_last_reference_point();
-	void update_hold();
-	void update_shift();
-	void update_stretching_scale();
-	void update_window();
+		void update()
+		{
+			gc.ch.plot.update(gc.compression_factors);
 
-public:
-	double get_ref_x();
-	double get_ref_y();
+			gc.ch.bound[0].update(gc.compression_factors);
+			gc.ch.bound[1].update(gc.compression_factors);
+			gc.ch.bound[2].update(gc.compression_factors);
+			gc.ch.bound[3].update(gc.compression_factors);
+		}
 
-public:
-	void set_reference_point(double, double);
-	void set_display_limit(double, double);
+		chart()
+		{
+			plot.set(CHART_START_POINT, CHART_SIZE);
+			
+			_xy start_point_bound0 = _xy(0, 0);
+			_xy size_bound0 = _xy(CHART_START_POINT.x, DEFAULT_SIZE_WINDOW_Y);
+			bound[0].set(start_point_bound0, size_bound0);
+		
+			_xy start_point_bound1 = _xy(CHART_START_POINT.x, 0);
+			_xy size_bound1 = _xy(DEFAULT_SIZE_WINDOW_X, CHART_START_POINT.y);
+			bound[1].set(start_point_bound1, size_bound1);
 
-public:
-	graphics_core();
-};
+			_xy start_point_bound2 = _xy(0, CHART_START_POINT.y + CHART_SIZE.y);
+			_xy size_bound2 = _xy(DEFAULT_SIZE_WINDOW_X, DEFAULT_SIZE_WINDOW_Y);
+			bound[2].set(start_point_bound2, size_bound2);
 
-void graphics_core::update_scale()
-{
-	if (abs(scales.total_counter) > GRAPHICS_CORE_COUNTER_SCALE_LIMIT) 
-		scales.total_counter = GRAPHICS_CORE_COUNTER_SCALE_LIMIT* scales.total_counter/abs(scales.total_counter);
+			_xy start_point_bound3 = _xy(CHART_START_POINT.x + CHART_SIZE.x, 0);
+			_xy size_bound3 = _xy(DEFAULT_SIZE_WINDOW_X, DEFAULT_SIZE_WINDOW_Y);
+			bound[3].set(start_point_bound3, size_bound3);
+		}
 
-	window.coordinates_limit.x /= scales.total;
-	window.coordinates_limit.y /= scales.total;
+		// 1 plot          +
+		// 2 bound         +
+		// 3 axis
+		// 4 data <-load
+		// 5 lables
 
-	scales.total = GRAPHICS_CORE_DEFAULT_TOTAL_SCALE * pow(GRAPHICS_CORE_UPDATE_TOTAL_SCALE, scales.total_counter);
+	}ch;
 
-	window.coordinates_limit.x *= scales.total;
-	window.coordinates_limit.y *= scales.total;
-
-	update_stretching_scale();
-}
-
-void graphics_core::update_scale_width()
-{
-	if (abs(scales.width_counter) > GRAPHICS_CORE_COUNTER_SCALE_LIMIT)
-		scales.width_counter = GRAPHICS_CORE_COUNTER_SCALE_LIMIT * scales.width_counter / abs(scales.width_counter);
-
-	window.coordinates_limit.x /= scales.width;
-
-	scales.width = GRAPHICS_CORE_DEFAULT_WIDTH_SCALE * pow(GRAPHICS_CORE_UPDATE_WIDTH_SCALE, scales.width_counter);
-
-	window.coordinates_limit.x *= scales.width;
-
-	update_stretching_scale();
-}
-
-void graphics_core::update_reference_point()
-{
-	picture.current_reference_point.x = picture.last_reference_point.x + picture.offset_reference_point.x;
-	picture.current_reference_point.y = picture.last_reference_point.y + picture.offset_reference_point.y;
-}
-
-void graphics_core::update_last_reference_point()
-{
-	picture.last_reference_point.x = picture.current_reference_point.x;
-	picture.last_reference_point.y = picture.current_reference_point.y;
-}
-
-void graphics_core::update_hold()
-{
-	mouse.hold_position.x = mouse.current_position.x;
-	mouse.hold_position.y = mouse.current_position.y;
-	update_last_reference_point();
-}
-
-void graphics_core::update_shift()
-{
-	picture.offset_reference_point.x = (mouse.hold_position.x - mouse.current_position.x) / scales.stretching.x;
-	picture.offset_reference_point.y = (mouse.current_position.y - mouse.hold_position.y) / scales.stretching.y;
-}
-
-void graphics_core::update_stretching_scale()
-{
-	scales.stretching.x = window.count_pixels.x / window.coordinates_limit.x;
-	scales.stretching.y = window.count_pixels.y / window.coordinates_limit.y;
-}
-
-void graphics_core::update_window()
-{
-	window.coordinates_begin.x = get_abstract_coordinate_x(GRAPHICS_CORE_WINDOW_BACKLASH_START_X);
-	window.coordinates_begin.y = get_abstract_coordinate_y(GRAPHICS_CORE_WINDOW_BACKLASH_START_Y);
-
-	window.coordinates_end.x = get_abstract_coordinate_x(window.count_pixels.x);
-	window.coordinates_end.y = get_abstract_coordinate_y(window.count_pixels.y);
-}
-
-inline double graphics_core::get_ref_x()
-{
-	return picture.current_reference_point.x;
-}
-
-inline double graphics_core::get_ref_y()
-{
-	return picture.current_reference_point.y;
-}
-
-void graphics_core::set_reference_point(double x_reference, double y_reference)
-{
-	picture.current_reference_point.x = x_reference;
-	picture.current_reference_point.y = y_reference;
-}
-
-void graphics_core::set_display_limit(double x_limit, double y_limit)
-{
-	// window.coordinates_limit.x = x_limit * scales.total / GRAPH_COR_X;
-	// window.coordinates_limit.y = y_limit * scales.total / GRAPH_COR_Y;
-}
-
-graphics_core::graphics_core()
-{
-	window.coordinates_limit.x = GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_X;
-	window.coordinates_limit.y = GRAPHICS_CORE_WINDOW_DEFAULT_LIMIT_Y;
-}
-
-graphics_core gc;
-
-//	window -> abstract
-//	Transform window coordinates in abstract coordinates
-//	Reference_point - centre windows
-inline _Acrd get_abstract_coordinate_x(_Wcrd pixel_x)
-{
-	return gc.picture.current_reference_point.x - gc.window.coordinates_limit.x / 2 + pixel_x / gc.scales.stretching.x;
-}
-
-inline _Acrd get_abstract_coordinate_y(_Wcrd pixel_y)
-{
-	return gc.picture.current_reference_point.y + gc.window.coordinates_limit.y / 2 - pixel_y / gc.scales.stretching.y;
-}
-
-//	abstract -> window
-//	Transform abstract coordinates in window coordinates 
-//	Reference_point - centre windows
-inline _Wcrd get_window_coordinate_x(_Acrd coordinate_x)
-{
-	return (coordinate_x - gc.picture.current_reference_point.x + gc.window.coordinates_limit.x / 2) * gc.scales.stretching.x;
-}
-
-inline _Wcrd get_window_coordinate_y(_Acrd coordinate_y)
-{
-	return (-coordinate_y + gc.picture.current_reference_point.y + gc.window.coordinates_limit.y / 2) * gc.scales.stretching.y;
-}
+} gc;
