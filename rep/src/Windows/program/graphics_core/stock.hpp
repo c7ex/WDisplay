@@ -1,5 +1,28 @@
 #pragma once
 
+
+// // // // // // // // //      main timer     // // // // // // // // // //
+
+namespace main_timer
+{
+	size_t id = 0;
+	size_t interval = 2 * USER_TIMER_MINIMUM;
+}
+
+
+
+// // // // // // // // //         keys        // // // // // // // // // //
+
+namespace keys
+{
+	bool mouse = false;
+	bool shift = false;
+	bool ctrl = false;
+}
+
+
+// // // // // // // // //    stock objects    // // // // // // // // // //
+
 namespace stock_objects
 {
 	struct

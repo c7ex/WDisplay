@@ -1,8 +1,6 @@
 #pragma once
 #include"string"
 
-// descriptions
-#include"descriptions/graphics_core.hpp"
-
-// global data
-#include"global/stock.hpp"
+#include"types.hpp"
+#include"stock.hpp"
+#include"graphics_core.hpp"

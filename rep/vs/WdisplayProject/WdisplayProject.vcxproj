@@ -23,9 +23,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\Windows\display.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\graphics_core.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\stock.hpp" />
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\types.hpp" />
     <ClInclude Include="..\..\src\Windows\winloop.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\descriptions\graphics_core.hpp" />
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\stock.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\graphics_handler.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\packs.hpp" />
     <ClInclude Include="..\..\src\Windows\program\graphics_core\rendering.hpp" />

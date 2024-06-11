@@ -22,12 +22,6 @@
     <Filter Include="Windows\program\graphics_core">
       <UniqueIdentifier>{eb5bb8cf-bc34-47ca-84a2-35d9e3b733dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Windows\program\graphics_core\global">
-      <UniqueIdentifier>{bcfc5c8d-acd7-403c-bd70-5f92b242e330}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Windows\program\graphics_core\descriptions">
-      <UniqueIdentifier>{85775084-b732-4e08-bdcb-bfecd10b1c80}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\Entry\console.cpp">
@@ -47,9 +41,6 @@
     <ClInclude Include="..\..\src\Windows\program\widgets\widgets.hpp">
       <Filter>Windows\program\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\global\stock.hpp">
-      <Filter>Windows\program\graphics_core\global</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\graphics_core\graphics_handler.hpp">
       <Filter>Windows\program\graphics_core</Filter>
     </ClInclude>
@@ -59,8 +50,14 @@
     <ClInclude Include="..\..\src\Windows\program\graphics_core\rendering.hpp">
       <Filter>Windows\program\graphics_core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\descriptions\graphics_core.hpp">
-      <Filter>Windows\program\graphics_core\descriptions</Filter>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\graphics_core.hpp">
+      <Filter>Windows\program\graphics_core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\stock.hpp">
+      <Filter>Windows\program\graphics_core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\types.hpp">
+      <Filter>Windows\program\graphics_core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

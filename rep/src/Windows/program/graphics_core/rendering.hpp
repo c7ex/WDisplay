@@ -7,17 +7,7 @@ void paint_text(HDC& hMemDc, int x, int y, std::wstring lable, double value, COL
 	TextOut(hMemDc, x, y, gl_wstr.c_str(), (int)gl_wstr.size());
 }
 
-void paint_line(HDC& hMemDc, double x0, double y0, double x1, double y1)
-{
-	MoveToEx(hMemDc, (int)x0, (int)y0, NULL);
-	LineTo(hMemDc, (int)x1, (int)y1);
-}
 
-void paint_pixel(HDC& hMemDc, int x, int y)
-{
-	MoveToEx(hMemDc, x, y, NULL);
-	LineTo(hMemDc, x+1, y+1);
-}
 
 // graphic core update
 void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& hMemDc,HBITMAP& hMemBmp)
@@ -25,24 +15,30 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 	HFONT hFont = CreateFont(14, 0, 0, 0, FW_NORMAL, 0, 0, 0, 0, 0, 0, 2, 0, L"SYSTEM_FIXED_FONT");
 	HFONT hTmp = (HFONT)SelectObject(hMemDc, hFont);
 	SetBkMode(hMemDc, TRANSPARENT);
-	
-	gc.ch.paint_chart(hMemDc,
-		stock_objects::pen.chart,
-		stock_objects::brush.chart,
-		stock_objects::pen.bound,
-		stock_objects::brush.bound);
 
-	paint_text(hMemDc, 10, 10, L"window_size_in_pixels x:", gc.window_size_in_pixels.x);
-	paint_text(hMemDc, 10, 20, L"window_size_in_pixels y:", gc.window_size_in_pixels.y);
+	wds.update();
+	wds.paint(hMemDc);
 
-	paint_text(hMemDc, 10, 30, L"window_mouse_position_in_pixels x:", gc.window_mouse_position_in_pixels.x);
-	paint_text(hMemDc, 10, 40, L"window_mouse_position_in_pixels y:", gc.window_mouse_position_in_pixels.y);
-
-	paint_text(hMemDc, 10, 50, L"compression_factors x:", gc.compression_factors.x);
-	paint_text(hMemDc, 10, 60, L"compression_factors y:", gc.compression_factors.y);
-
-	paint_text(hMemDc, 10, 70, L"middle x:", gc.ch.plot.middle.x);
-	paint_text(hMemDc, 10, 80, L"middle y:", gc.ch.plot.middle.y);
+	wds.AddLable(hMemDc, pointf(310, 30),  L"current mouse x:", hd_form_mouse.get_x());
+	wds.AddLable(hMemDc, pointf(310, 40),  L"current mouse y:", hd_form_mouse.get_y());
+	wds.AddLable(hMemDc, pointf(310, 50),  L"size x:", hf_form_size.get_x());
+	wds.AddLable(hMemDc, pointf(310, 60),  L"size y:", hf_form_size.get_y());
+	wds.AddLable(hMemDc, pointf(310, 70),  L"expand x:", hf_form_expand.get_x());
+	wds.AddLable(hMemDc, pointf(310, 80),  L"expand y:", hf_form_expand.get_y());
+	wds.AddLable(hMemDc, pointf(310, 90),  L"abstruct expand x:", wds.plot().abstruct_expand.to_pointf().get_x());
+	wds.AddLable(hMemDc, pointf(310, 100), L"abstruct expand y:", wds.plot().abstruct_expand.to_pointf().get_y());
+	wds.AddLable(hMemDc, pointf(310, 110), L"current abstruct x:", wds.plot().get_abstruct(hd_form_mouse).get_x());
+	wds.AddLable(hMemDc, pointf(310, 120), L"current abstruct y:", wds.plot().get_abstruct(hd_form_mouse).get_y());
+	wds.AddLable(hMemDc, pointf(310, 130), L"current offset x:", wds.plot().state_current_offset.get_x());
+	wds.AddLable(hMemDc, pointf(310, 140), L"current offset y:", wds.plot().state_current_offset.get_y());
+	wds.AddLable(hMemDc, pointf(310, 150), L"last offset x:", wds.plot().state_last_offset.get_x());
+	wds.AddLable(hMemDc, pointf(310, 160), L"last offset y:", wds.plot().state_last_offset.get_y());
+	wds.AddLable(hMemDc, pointf(310, 170), L"abstruct scale x:", wds.plot().state_scale.get_x());
+	wds.AddLable(hMemDc, pointf(310, 180), L"abstruct scale y:", wds.plot().state_scale.get_y());
+	wds.AddLable(hMemDc, pointf(310, 190), L"abstruct centre x:", wds.plot().abstruct_centre.get_x());
+	wds.AddLable(hMemDc, pointf(310, 200), L"abstruct centre y:", wds.plot().abstruct_centre.get_y());
+	wds.AddLable(hMemDc, pointf(310, 210), L"chart centre x:", wds.plot().get_chart_centre().get_x());
+	wds.AddLable(hMemDc, pointf(310, 220), L"chart centre y:", wds.plot().get_chart_centre().get_y());
 
 	SelectObject(hMemDc, hFont);
 	DeleteObject(hFont);
