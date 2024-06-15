@@ -15,7 +15,6 @@ namespace main_timer
 
 namespace keys
 {
-	bool mouse = false;
 	bool shift = false;
 	bool ctrl = false;
 }
