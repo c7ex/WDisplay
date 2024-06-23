@@ -1,7 +1,7 @@
 #pragma once
 
-#define tyzero    0
-#define tyhalf    0.5
+#define types_ZERO    0
+#define types_HALF    0.5
 
 class pointf;
 class paramf;
@@ -32,6 +32,12 @@ public:
 	void y_inv()
 	{
 		_y = -_y;
+	}
+
+	void mod()
+	{
+		_x = abs(_x);
+		_y = abs(_y);
 	}
 
 public:
@@ -71,6 +77,31 @@ public:
 		return pointf{ _x / rigth, _y / rigth };
 	}
 
+	bool operator> (const pointf& rigth)
+	{
+		return ((_x > rigth._x) && (_y > rigth._y));
+	}
+
+	bool operator< (const pointf& rigth)
+	{
+		return ((_x < rigth._x) && (_y < rigth._y));
+	}
+
+	bool operator>= (const pointf& rigth)
+	{
+		return ((_x >= rigth._x) && (_y >= rigth._y));
+	}
+
+	bool operator<= (const pointf& rigth)
+	{
+		return ((_x <= rigth._x) && (_y <= rigth._y));
+	}
+
+	bool operator== (const pointf& rigth)
+	{
+		return ((_x == rigth._x) && (_y == rigth._y));
+	}
+
 public:
 	void set(double new_x, double new_y)
 	{
@@ -92,8 +123,8 @@ public:
 
 	pointf()
 	{ 
-		_x = tyzero;
-		_y = tyzero;
+		_x = types_ZERO;
+		_y = types_ZERO;
 	}
 };
 
@@ -105,6 +136,12 @@ public:
 	pointf to_pointf()
 	{
 		return pointf{_x, _y};
+	}
+
+	void integer()
+	{
+		_x = round(_x);
+		_y = round(_y);
 	}
 
 public:
@@ -280,13 +317,24 @@ public:
 	}
 
 public:
+	pointf& get_start_point()
+	{
+		return _spoint;
+	}
+
+	pointf& get_end_point()
+	{
+		return _epoint;
+	}
+
+public:
 	void update(const paramf& expand)
 	{
 		_size.update_from_expand(expand);
 		_centre.update_from_expand(expand);
 
-		_spoint = _centre.get_current().to_pointf() - (_size.get_current().to_pointf() * tyhalf);
-		_epoint = _centre.get_current().to_pointf() + (_size.get_current().to_pointf() * tyhalf);
+		_spoint = _centre.get_current().to_pointf() - (_size.get_current().to_pointf() * types_HALF);
+		_epoint = _centre.get_current().to_pointf() + (_size.get_current().to_pointf() * types_HALF);
 	}
 
 	void paint(HDC& hdc, HPEN& pen, HBRUSH& brush)
@@ -294,10 +342,10 @@ public:
 		SelectObject(hdc, pen);
 		SelectObject(hdc, brush);
 		Rectangle(hdc,
-			_spoint.get_x(),
-			_spoint.get_y(),
-			_epoint.get_x(),
-			_epoint.get_y());
+			static_cast<int>(_spoint.get_x()),
+			static_cast<int>(_spoint.get_y()),
+			static_cast<int>(_epoint.get_x()),
+			static_cast<int>(_epoint.get_y()));
 	}
 
 public:
@@ -307,17 +355,17 @@ public:
 		_size.set(init_size);
 		_centre.set(init_centre);
 
-		_spoint = _centre.get_current().to_pointf() - (_size.get_current().to_pointf() * tyhalf);
-		_epoint = _centre.get_current().to_pointf() + (_size.get_current().to_pointf() * tyhalf);
+		_spoint = _centre.get_current().to_pointf() - (_size.get_current().to_pointf() * types_HALF);
+		_epoint = _centre.get_current().to_pointf() + (_size.get_current().to_pointf() * types_HALF);
 	}
 
 	rectpropf()
 	{
 		_centre.set(
-			tyzero,
-			tyzero);
+			types_ZERO,
+			types_ZERO);
 		_size.set(
-			tyzero,
-			tyzero);
+			types_ZERO,
+			types_ZERO);
 	}
 };

@@ -7,8 +7,6 @@ void paint_text(HDC& hMemDc, int x, int y, std::wstring lable, double value, COL
 	TextOut(hMemDc, x, y, gl_wstr.c_str(), (int)gl_wstr.size());
 }
 
-
-
 // graphic core update
 void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& hMemDc,HBITMAP& hMemBmp)
 {
@@ -19,26 +17,10 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 	wds.update();
 	wds.paint(hMemDc);
 
-	wds.AddLable(hMemDc, pointf(310, 30),  L"current mouse x:", hd_form_mouse.get_x());
-	wds.AddLable(hMemDc, pointf(310, 40),  L"current mouse y:", hd_form_mouse.get_y());
-	wds.AddLable(hMemDc, pointf(310, 50),  L"size x:", hd_form_size.get_x());
-	wds.AddLable(hMemDc, pointf(310, 60),  L"size y:", hd_form_size.get_y());
-	wds.AddLable(hMemDc, pointf(310, 70),  L"expand x:", hd_form_expand.get_x());
-	wds.AddLable(hMemDc, pointf(310, 80),  L"expand y:", hd_form_expand.get_y());
-	wds.AddLable(hMemDc, pointf(310, 90),  L"abstruct expand x:", hd_engine.expand.to_pointf().get_x());
-	wds.AddLable(hMemDc, pointf(310, 100), L"abstruct expand y:", hd_engine.expand.to_pointf().get_y());
-	wds.AddLable(hMemDc, pointf(310, 110), L"current abstruct x:", hd_engine.get_abstruct(hd_form_mouse).get_x());
-	wds.AddLable(hMemDc, pointf(310, 120), L"current abstruct y:", hd_engine.get_abstruct(hd_form_mouse).get_y());
-	wds.AddLable(hMemDc, pointf(310, 130), L"current offset x:", hd_engine.current_offset.get_x());
-	wds.AddLable(hMemDc, pointf(310, 140), L"current offset y:", hd_engine.current_offset.get_y());
-	wds.AddLable(hMemDc, pointf(310, 150), L"last offset x:", hd_engine.last_offset.get_x());
-	wds.AddLable(hMemDc, pointf(310, 160), L"last offset y:", hd_engine.last_offset.get_y());
-	wds.AddLable(hMemDc, pointf(310, 170), L"abstruct scale x:", hd_engine.scale.get_x());
-	wds.AddLable(hMemDc, pointf(310, 180), L"abstruct scale y:", hd_engine.scale.get_y());
-	wds.AddLable(hMemDc, pointf(310, 190), L"abstruct centre x:", hd_engine.centre.get_x());
-	wds.AddLable(hMemDc, pointf(310, 200), L"abstruct centre y:", hd_engine.centre.get_y());
-	wds.AddLable(hMemDc, pointf(310, 210), L"chart centre x:", wds.chart().get_chart_centre().get_x());
-	wds.AddLable(hMemDc, pointf(310, 220), L"chart centre y:", wds.chart().get_chart_centre().get_y());
+	wds.AddLable(hMemDc, pointf(310, 30),  L"current mouse x:", Form_Mouse.get_x());
+	wds.AddLable(hMemDc, pointf(310, 40),  L"current mouse y:", Form_Mouse.get_y());
+	wds.AddLable(hMemDc, pointf(310, 50), L"current abstruct x:", Engine.get_abstruct(Form_Mouse).get_x());
+	wds.AddLable(hMemDc, pointf(310, 60), L"current abstruct y:", Engine.get_abstruct(Form_Mouse).get_y());
 
 	SelectObject(hMemDc, hFont);
 	DeleteObject(hFont);
@@ -48,7 +30,7 @@ void GraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, HDC& 
 
 LRESULT rendering(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	//auto startTime = std::chrono::high_resolution_clock::now();
+	auto startTime = std::chrono::high_resolution_clock::now();
 
 	HDC          hMemDc;
 	HBITMAP      hMemBmp;
@@ -77,8 +59,8 @@ LRESULT rendering(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 	EndPaint(hWnd, &ps);
 
-	//auto endTime = std::chrono::high_resolution_clock::now();
-	//std::chrono::duration<double> Time = endTime - startTime;
+	auto endTime = std::chrono::high_resolution_clock::now();
+	std::chrono::duration<double> Time = endTime - startTime;
 	//std::cout << std::endl << "paint_compressed_mode: " << Time.count() << " s" << std::endl;
 
 	return 0;
