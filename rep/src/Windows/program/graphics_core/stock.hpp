@@ -32,11 +32,11 @@ namespace stock_objects
 		COLORREF red            = RGB(0xFF, 0x00, 0x00);
 
 		COLORREF bound          = RGB(0x0E, 0x0E, 0x0E);
-		COLORREF axis           = RGB(0x35, 0x35, 0x35);
-		COLORREF labels         = RGB(0x85, 0x75, 0x55);
+		COLORREF axis           = RGB(0x15, 0x15, 0x35);
+		COLORREF labels         = RGB(0x75, 0x45, 0x75);
 
-		COLORREF chart          = RGB(0x0E, 0x1A, 0x0E);
-		COLORREF chart_enable   = RGB(0x3E, 0x4A, 0x3E);
+		COLORREF chart          = RGB(0x05, 0x05, 0x11);
+		COLORREF chart_enable   = RGB(0x15, 0x15, 0x3E);
 		COLORREF chart_disable  = RGB(0x80, 0x1A, 0x0E);
 	} color;
 	
@@ -55,6 +55,8 @@ namespace stock_objects
 		HPEN chart              = CreatePen(PS_SOLID, 1, color.chart);
 		HPEN chart_enable       = CreatePen(PS_SOLID, 1, color.chart_enable);
 		HPEN chart_disable      = CreatePen(PS_SOLID, 1, color.chart_disable);
+
+		HPEN test               = CreatePen(PS_SOLID, 2, color.white);
 	} pen;
 
 	struct
@@ -73,39 +75,42 @@ namespace stock_objects
 
 // // // // // // // // //      init data      // // // // // // // // // //
 
+#define DEFAULT_SCALE_MULTIPLIER   1.05
+#define SCALE_DIVIDER_DEFAULT      -120. // 1 tick = 1 count
+#define SCALE_DIVIDER_FAST          -40. // 1 tick = 3 count
+
 namespace Init
 {
 	struct
 	{
-		paramf size             = paramf{ 400. ,400. };
+		xy_param size             = xy_param{ 400. ,400. };
 	}form;
 
 	struct
 	{
-		paramf size             = paramf{ 270., 360. };
-		pointf centre           = pointf{ 160., 200. };
+		xy_param size             = xy_param{ 270., 360. };
+		xy_point centre           = xy_point{ 160., 200. };
 	}plot;
 
 	struct
 	{
-		paramf size             = paramf{ 100.,  100.};
-		paramf upper_limit_size = paramf{  1e6,  1e6 };
-		paramf lower_limit_size = paramf{ 1e-3, 1e-3 };
-		pointf centre           = pointf{   0.,    0.};
+		xy_param size             = xy_param{ 100.,  100.};
+		xy_param upper_limit_size = xy_param{  1e6,  1e6 };
+		xy_param lower_limit_size = xy_param{ 1e-3, 1e-3 };
+		xy_point centre           = xy_point{   0.,    0.};
 	}engine;
 
 	struct
 	{
-		paramf size             = engine.size;
-		pointf centre           = engine.centre;
-		paramf count            = paramf{  10.,  10. };
+		xy_param size             = engine.size;
+		xy_point centre           = engine.centre;
+		xy_param coarse_count     = xy_param{  16.,  16. };
 	}axes;
 
 }
 
-#define DEFAULT_SCALE_MULTIPLIER   1.05
-#define SCALE_DIVIDER_DEFAULT      -120. // 1 tick = 1 count
-#define SCALE_DIVIDER_FAST          -40. // 1 tick = 3 count
+
+// // // // // // // // //        methods      // // // // // // // // // //
 
 namespace exclusive
 {
@@ -170,7 +175,7 @@ namespace exclusive
 
 		std::wstring result = std::to_wstring(value);
 
-		int size = result.size();
+		int size = static_cast<int>(result.size());
 		int k = 0;
 
 		while (k != size - 1)
@@ -191,5 +196,29 @@ namespace exclusive
 		result.resize(size - k);
 
 		return result;
+	}
+
+	COLORREF change_ref_color(COLORREF reference_color, COLORREF background_color, double coefficient)
+	{
+		COLORREF delta = reference_color - background_color;
+		std::size_t r = coefficient * ((delta & 0xff0000) >> 16);
+		std::size_t g = coefficient * ((delta & 0x00ff00) >> 8);
+		std::size_t b = coefficient * ((delta & 0x0000ff));
+		return (RGB(r,g,b) + background_color);
+	}
+}
+
+namespace paint
+{
+	void line(HDC& hMemDc, double x0, double y0, double x1, double y1)
+	{
+		MoveToEx(hMemDc, (int)x0, (int)y0, NULL);
+		LineTo(hMemDc, (int)x1, (int)y1);
+	}
+
+	void line(HDC& hMemDc, xy_point p1, xy_point p2)
+	{
+		MoveToEx(hMemDc, (int)p1.get_x(), (int)p1.get_y(), NULL);
+		LineTo(hMemDc, (int)p2.get_x(), (int)p2.get_y());
 	}
 }

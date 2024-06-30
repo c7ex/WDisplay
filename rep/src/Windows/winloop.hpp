@@ -1,5 +1,5 @@
 #pragma once
-#include"graphics_handler.hpp"
+#include"wds_events.hpp"
 #include"widgets.hpp"
 
 # define WM_CORE 	WM_MOUSEWHEEL: case WM_LBUTTONDOWN: case WM_LBUTTONUP: case WM_MOUSEMOVE: case WM_SIZE: case WM_KEYDOWN: case WM_KEYUP
@@ -29,7 +29,7 @@ LRESULT CALLBACK MainMessageHandler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 		case WM_CORE: // update state graphic
 		{
-			return MainGraphicHandler(hWnd, message, wParam, lParam);
+			return wds_events(hWnd, message, wParam, lParam);
 		}
 
 		case WM_COMMAND: // events widgets
@@ -44,7 +44,7 @@ LRESULT CALLBACK MainMessageHandler(HWND hWnd, UINT message, WPARAM wParam, LPAR
 
 		case WM_PAINT: // repaint from paint event
 		{
-			return rendering(hWnd, message, wParam, lParam);
+			return paint_frame(hWnd, message, wParam, lParam);
 		}
 
 		default:

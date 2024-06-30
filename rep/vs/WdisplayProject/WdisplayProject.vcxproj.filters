@@ -41,7 +41,7 @@
     <ClInclude Include="..\..\src\Windows\program\widgets\widgets.hpp">
       <Filter>Windows\program\widgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\graphics_handler.hpp">
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\wds_events.hpp">
       <Filter>Windows\program\graphics_core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\graphics_core\packs.hpp">
@@ -50,7 +50,7 @@
     <ClInclude Include="..\..\src\Windows\program\graphics_core\rendering.hpp">
       <Filter>Windows\program\graphics_core</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\Windows\program\graphics_core\graphics_core.hpp">
+    <ClInclude Include="..\..\src\Windows\program\graphics_core\wds.hpp">
       <Filter>Windows\program\graphics_core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\Windows\program\graphics_core\stock.hpp">

@@ -2,13 +2,13 @@
 #include"packs.hpp"
 #include"rendering.hpp"
 
-LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+LRESULT wds_events(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	switch (message)
 	{
 		case WM_MOUSEMOVE:
 		{
-			pointf current_mouse_position = pointf(LOWORD(lParam), HIWORD(lParam));
+			simplest_unit current_mouse_position = simplest_unit(LOWORD(lParam), HIWORD(lParam));
 
 			wds.form().update_mouse(current_mouse_position);
 			Engine_Active    (Form_Mouse);
@@ -29,7 +29,7 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 
 		case WM_LBUTTONDOWN:
 		{
-			pointf current_mouse_position = pointf(LOWORD(lParam), HIWORD(lParam));
+			simplest_unit current_mouse_position = simplest_unit(LOWORD(lParam), HIWORD(lParam));
 			Engine_Hold_Start(current_mouse_position);
 			return 0;
 		}
@@ -48,7 +48,7 @@ LRESULT MainGraphicHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam
 			double form_size_x = rt.right - rt.left - 15;
 			double form_size_y = rt.bottom - rt.top - 38;
 
-			paramf current_form_size = paramf(form_size_x, form_size_y);
+			xy_param current_form_size = xy_param(form_size_x, form_size_y);
 			wds.form().update_size(current_form_size);
 			return 0;
 		}
