@@ -6,7 +6,7 @@
 namespace main_timer
 {
 	size_t id = 0;
-	size_t interval = 2 * USER_TIMER_MINIMUM;
+	size_t interval = 1 * USER_TIMER_MINIMUM;
 }
 
 
@@ -35,7 +35,7 @@ namespace stock_objects
 		COLORREF axis           = RGB(0x15, 0x15, 0x35);
 		COLORREF labels         = RGB(0x75, 0x45, 0x75);
 
-		COLORREF chart          = RGB(0x05, 0x05, 0x11);
+		COLORREF chart          = RGB(0x45, 0x15, 0x61);
 		COLORREF chart_enable   = RGB(0x15, 0x15, 0x3E);
 		COLORREF chart_disable  = RGB(0x80, 0x1A, 0x0E);
 	} color;
@@ -57,6 +57,7 @@ namespace stock_objects
 		HPEN chart_disable      = CreatePen(PS_SOLID, 1, color.chart_disable);
 
 		HPEN test               = CreatePen(PS_SOLID, 2, color.white);
+		HPEN test2              = CreatePen(PS_SOLID, 2, color.red);
 	} pen;
 
 	struct
@@ -95,7 +96,7 @@ namespace Init
 	struct
 	{
 		xy_param size             = xy_param{ 100.,  100.};
-		xy_param upper_limit_size = xy_param{  1e6,  1e6 };
+		xy_param upper_limit_size = xy_param{ 10e6, 10e4 };
 		xy_param lower_limit_size = xy_param{ 1e-3, 1e-3 };
 		xy_point centre           = xy_point{   0.,    0.};
 	}engine;
@@ -104,7 +105,7 @@ namespace Init
 	{
 		xy_param size             = engine.size;
 		xy_point centre           = engine.centre;
-		xy_param coarse_count     = xy_param{  16.,  16. };
+		xy_param coarse_count     = xy_param{  18.,  18. };
 	}axes;
 
 }
@@ -200,10 +201,29 @@ namespace exclusive
 
 	COLORREF change_ref_color(COLORREF reference_color, COLORREF background_color, double coefficient)
 	{
-		COLORREF delta = reference_color - background_color;
-		std::size_t r = coefficient * ((delta & 0xff0000) >> 16);
-		std::size_t g = coefficient * ((delta & 0x00ff00) >> 8);
-		std::size_t b = coefficient * ((delta & 0x0000ff));
+		int ref_r    = (reference_color & 0xff0000) >> 16;
+		int ref_g    = (reference_color & 0x00ff00) >> 8;
+		int ref_b    = (reference_color & 0x0000ff);
+
+		int ground_r = (background_color & 0xff0000) >> 16;
+		int ground_g = (background_color & 0x00ff00) >> 8;
+		int ground_b = (background_color & 0x0000ff);
+
+		int delta_r = ref_r - ground_r;
+		if (delta_r < 0)
+			delta_r = abs(delta_r);
+
+		int delta_g = ref_g - ground_g;
+		if (delta_g < 0)
+			delta_g = abs(delta_g);
+
+		int delta_b = ref_b - ground_b;
+		if (delta_b < 0)
+			delta_b = abs(delta_b);
+
+		std::size_t r = coefficient * delta_r;
+		std::size_t g = coefficient * delta_g;
+		std::size_t b = coefficient * delta_b;
 		return (RGB(r,g,b) + background_color);
 	}
 }

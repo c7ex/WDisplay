@@ -114,4 +114,9 @@ public:
 	{
 		WinMain(arg_hInstance,arg_hPrevInstance,arg_lpCmdLine,arg_nCmdShow);
 	}
+
+	void load_data(std::vector<double>& load_content, double load_step = 1, double load_offset = 0)
+	{
+		Data_Init(load_content, load_step, load_offset);
+	}
 };

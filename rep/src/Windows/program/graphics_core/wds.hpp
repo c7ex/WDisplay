@@ -45,7 +45,8 @@ class graphics_engine
 {
 private:
 	xy_param size;
-	xy_point centre;
+	xy_point centre; // abstruct-coordinate in windows coordinate system
+
 	xy_param expand;
 	xy_point hold;
 	xy_param current_offset;
@@ -55,6 +56,9 @@ private:
 
 	xy_point plot_centre;
 	xy_param plot_size;
+
+	xy_point limit_left_down;
+	xy_point limit_right_up;
 
 	bool   hold_state   = false;
 	bool   active_state = false;
@@ -87,6 +91,7 @@ public:
 		return plot_centre;
 	}
 
+public:
 	xy_param& get_size()
 	{
 		return size;
@@ -95,6 +100,17 @@ public:
 	xy_point& get_centre()
 	{
 		return centre;
+	}
+
+public:
+	xy_point& get_limit_left_down()
+	{
+		return limit_left_down;
+	}
+
+	xy_point& get_limit_right_up()
+	{
+		return limit_right_up;
 	}
 
 public:
@@ -201,6 +217,17 @@ public:
 		scale_counter.set(limit_scale_x, limit_scale_y);
 	}
 
+	void update_limits()
+	{
+		xy_point acentre = centre;
+		xy_param half = size / 2.;
+
+		acentre.y_invert();
+
+		limit_left_down = acentre - half;
+		limit_right_up = acentre + half;
+	}
+
 public:
 	bool is_active()
 	{
@@ -213,7 +240,7 @@ public:
 		plot_centre = plot.get_centre().get_current();
 		expand = size / plot_size;
 
-		if (active_state == true) return;
+		update_limits();
 	}
 
 public:
@@ -230,9 +257,164 @@ public:
 
 		scale.set(1., 1.);
 		scale_counter.set(0, 0);
+
+		update_limits();
 	}
 
 	graphics_engine() {};
+};
+
+// figures for chart
+class data
+{
+public:
+	std::vector<double> content;
+	double step;
+	double offset;
+
+public:
+	void paint(HDC& hdc, graphics_engine& engine)
+	{
+		double x_data_begin = offset;
+		double x_data_end = offset + step * (content.size() - 1);
+
+		double x_left_limit = engine.get_limit_left_down().get_x();
+		double x_right_limit = engine.get_limit_right_up().get_x();
+
+		// search left data point
+		unsigned int first_index = 0;
+
+		if (x_left_limit > x_data_begin)
+		{
+			double delta = x_left_limit - x_data_begin;
+			first_index = delta / step;
+		}
+
+		// search right data point
+		unsigned int last_index = last_index = content.size() - 2;
+
+		if (x_right_limit < x_data_end)
+		{
+			double delta = x_right_limit;
+			last_index = delta / step;
+		}
+
+		// compressed solve
+		unsigned int count_data = (last_index - first_index); // count paint data points
+		unsigned int count_pixels = engine.get_plot_size().get_x();
+
+		double coefficient_compressed = 
+			static_cast<double>(count_data) / 
+			static_cast<double>(count_pixels);
+
+		if (coefficient_compressed < 2.)
+			paint_non_compressed_mode(hdc, engine, first_index, last_index);
+		else
+			paint_compressed_mode(hdc, engine, first_index, last_index, coefficient_compressed);
+	}
+
+private:
+	void paint_non_compressed_mode(
+		HDC& hdc, 
+		graphics_engine& engine, 
+		unsigned int first_index, 
+		unsigned int last_index)
+	{
+		SelectObject(hdc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.test));
+
+		unsigned int index = first_index;
+
+		double last_x = offset + step * index;
+		xy_point last_point = xy_point{ last_x, content[index] };
+
+		index++;
+		double curr_x = last_x + step;
+		xy_point curr_point = xy_point{ curr_x, content[index] };
+
+		paint::line(hdc,
+			engine.get_window(last_point),
+			engine.get_window(curr_point));
+
+		while (index <= last_index)
+		{
+			last_point = curr_point;
+
+			index++;
+			curr_x = curr_x + step;
+			curr_point = xy_point{ curr_x, content[index] };
+
+			paint::line(hdc,
+				engine.get_window(last_point),
+				engine.get_window(curr_point));
+		}
+	}
+
+	void paint_compressed_mode(
+		HDC& hdc, 
+		graphics_engine& engine, 
+		unsigned int first_index, 
+		unsigned int last_index, 
+		double coefficient_compressed)
+	{
+		SelectObject(hdc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.test));
+
+		double index = first_index;
+
+		while (index <= last_index)
+		{
+
+			double local_start_index = index;
+			double local_end_index = local_start_index + coefficient_compressed;
+
+			double local_current_index = local_start_index;
+			double local_min_extremum = content[local_start_index];
+			double local_max_extremum = content[local_start_index];
+
+			if (local_end_index > last_index)
+				local_end_index = last_index;
+
+			while (local_current_index <= local_end_index)
+			{
+				if (local_min_extremum > content[local_current_index])
+				{
+					local_min_extremum = content[local_current_index];
+					local_current_index++;
+					continue;
+				}
+
+				if (local_max_extremum < content[local_current_index])
+					local_max_extremum = content[local_current_index];
+
+				local_current_index++;
+			}
+
+			xy_point min_extremum = xy_point{ offset + step * local_start_index, local_min_extremum };
+			xy_point max_extremum = xy_point{ offset + step * local_end_index, local_max_extremum };
+
+
+			paint::line(hdc,
+				engine.get_window(min_extremum),
+				engine.get_window(max_extremum));
+
+			index += coefficient_compressed;
+		}
+	
+	}
+
+public:
+	void Init(std::vector<double>& load_content, double load_step = 1, double load_offset = 0)
+	{
+		content = load_content;
+		step = load_step;
+		offset = load_offset;
+	}
+	
+	data() 
+	{ 
+		content.resize(0);
+		offset = 0; 
+		step = 0; 
+	};
 };
 
 // axis
@@ -535,8 +717,9 @@ private:
 	// paint objects
 	rect_prop _plot;
 	rect_prop _bounds[4];
+	data      _data;
 	axes      _axes;
-	
+
 private:
 	graphics_engine _engine;
 
@@ -549,6 +732,11 @@ public:
 	graphics_engine& engine()
 	{
 		return _engine;
+	}
+
+	data& data()
+	{
+		return _data;
 	}
 
 public:
@@ -576,10 +764,7 @@ public:
 		_axes.paint_axes(hdc, _engine);
 
 		// test obj
-		SelectObject(hdc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.test));
-		paint::line(hdc,
-			_engine.get_window(xy_point(-30, -30)),
-			_engine.get_window(xy_point(30, 30)));
+		_data.paint(hdc, _engine);
 
 		_bounds[0].paint(hdc, stock_objects::pen.bound, stock_objects::brush.bound);
 		_bounds[1].paint(hdc, stock_objects::pen.bound, stock_objects::brush.bound);
@@ -647,6 +832,8 @@ public:
 
 		_engine.Init();
 		_axes.Init();
+		
+		//_data.Init(stock_objects::tst_data);
 	}
 };
 
@@ -705,3 +892,5 @@ wdisplay wds;
 #define Engine_Mouse_Move(pos)             wds.chart().engine().event_mousemove(pos)
 #define Engine_Hold_Start(pos)             wds.chart().engine().event_hold_start(pos)
 #define Engine_Hold_Stop                   wds.chart().engine().event_hold_stop()
+
+#define Data_Init(content, step, offset)   wds.chart().data().Init(content, step, offset)
