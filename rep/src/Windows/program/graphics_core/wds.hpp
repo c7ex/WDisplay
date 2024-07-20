@@ -281,6 +281,10 @@ public:
 		double x_left_limit = engine.get_limit_left_down().get_x();
 		double x_right_limit = engine.get_limit_right_up().get_x();
 
+		// data out plot
+		if (x_data_begin > x_right_limit) return;
+		if (x_data_end < x_left_limit) return;
+
 		// search left data point
 		unsigned int first_index = 0;
 
@@ -300,12 +304,14 @@ public:
 		}
 
 		// compressed solve
-		unsigned int count_data = (last_index - first_index); // count paint data points
+		unsigned int count_data = engine.get_size().get_x();
 		unsigned int count_pixels = engine.get_plot_size().get_x();
 
 		double coefficient_compressed = 
 			static_cast<double>(count_data) / 
 			static_cast<double>(count_pixels);
+
+		std::cout << x_right_limit << "x\n";
 
 		if (coefficient_compressed < 2.)
 			paint_non_compressed_mode(hdc, engine, first_index, last_index);

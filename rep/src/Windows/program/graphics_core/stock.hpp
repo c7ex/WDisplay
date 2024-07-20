@@ -32,10 +32,10 @@ namespace stock_objects
 		COLORREF red            = RGB(0xFF, 0x00, 0x00);
 
 		COLORREF bound          = RGB(0x0E, 0x0E, 0x0E);
-		COLORREF axis           = RGB(0x15, 0x15, 0x35);
-		COLORREF labels         = RGB(0x75, 0x45, 0x75);
+		COLORREF axis           = RGB(0x30, 0x35, 0x50);
+		COLORREF labels         = RGB(0x40, 0x35, 0x70);
 
-		COLORREF chart          = RGB(0x45, 0x15, 0x61);
+		COLORREF chart          = RGB(0x1A, 0x15, 0x35);
 		COLORREF chart_enable   = RGB(0x15, 0x15, 0x3E);
 		COLORREF chart_disable  = RGB(0x80, 0x1A, 0x0E);
 	} color;
@@ -199,32 +199,25 @@ namespace exclusive
 		return result;
 	}
 
-	COLORREF change_ref_color(COLORREF reference_color, COLORREF background_color, double coefficient)
+	COLORREF change_ref_color(COLORREF& reference_color, COLORREF& background_color, double coefficient)
 	{
-		int ref_r    = (reference_color & 0xff0000) >> 16;
-		int ref_g    = (reference_color & 0x00ff00) >> 8;
-		int ref_b    = (reference_color & 0x0000ff);
+		int ref_r = (reference_color & 0x0000ff);
+		int ref_g = (reference_color & 0x00ff00) >> 8;
+		int ref_b = (reference_color & 0xff0000) >> 16;
 
-		int ground_r = (background_color & 0xff0000) >> 16;
-		int ground_g = (background_color & 0x00ff00) >> 8;
-		int ground_b = (background_color & 0x0000ff);
+		int gnd_r = (background_color & 0x0000ff);
+		int gnd_g = (background_color & 0x00ff00) >> 8;
+		int gnd_b = (background_color & 0xff0000) >> 16;
 
-		int delta_r = ref_r - ground_r;
-		if (delta_r < 0)
-			delta_r = abs(delta_r);
+		int del_r = ref_r - gnd_r;
+		int del_g = ref_g - gnd_g;
+		int del_b = ref_b - gnd_b;
 
-		int delta_g = ref_g - ground_g;
-		if (delta_g < 0)
-			delta_g = abs(delta_g);
+		std::size_t r = coefficient * del_r + gnd_r;
+		std::size_t g = coefficient * del_g + gnd_g;
+		std::size_t b = coefficient * del_b + gnd_b;
 
-		int delta_b = ref_b - ground_b;
-		if (delta_b < 0)
-			delta_b = abs(delta_b);
-
-		std::size_t r = coefficient * delta_r;
-		std::size_t g = coefficient * delta_g;
-		std::size_t b = coefficient * delta_b;
-		return (RGB(r,g,b) + background_color);
+		return RGB(r,g,b);
 	}
 }
 
