@@ -234,4 +234,13 @@ namespace paint
 		MoveToEx(hMemDc, (int)p1.get_x(), (int)p1.get_y(), NULL);
 		LineTo(hMemDc, (int)p2.get_x(), (int)p2.get_y());
 	}
+
+	inline void rect(HDC& hMemDc, xy_point p, int size)
+	{
+		Rectangle(hMemDc,
+			p.get_x() - size,
+			p.get_y() - size,
+			p.get_x() + size,
+			p.get_y() + size);
+	}
 }

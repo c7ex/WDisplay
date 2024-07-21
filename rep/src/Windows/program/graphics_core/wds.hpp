@@ -311,23 +311,21 @@ public:
 			static_cast<double>(count_data) / 
 			static_cast<double>(count_pixels);
 
-		std::cout << x_right_limit << "x\n";
+		double limit_compressed = 2.;
 
-		if (coefficient_compressed < 2.)
-			paint_non_compressed_mode(hdc, engine, first_index, last_index);
+		if (coefficient_compressed < limit_compressed)
+			paint_non_compressed_mode(hdc, engine, first_index, last_index, coefficient_compressed, limit_compressed);
 		else
 			paint_compressed_mode(hdc, engine, first_index, last_index, coefficient_compressed);
 	}
 
 private:
-	void paint_non_compressed_mode(
-		HDC& hdc, 
-		graphics_engine& engine, 
-		unsigned int first_index, 
-		unsigned int last_index)
+	void paint_non_compressed_mode_part_line(HDC& hdc,
+		graphics_engine& engine,
+		unsigned int first_index,
+		unsigned int last_index,
+		HPEN pen_data_line)
 	{
-		SelectObject(hdc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.test));
-
 		unsigned int index = first_index;
 
 		double last_x = offset + step * index;
@@ -337,6 +335,7 @@ private:
 		double curr_x = last_x + step;
 		xy_point curr_point = xy_point{ curr_x, content[index] };
 
+		SelectObject(hdc, reinterpret_cast<HGDIOBJ>(pen_data_line));
 		paint::line(hdc,
 			engine.get_window(last_point),
 			engine.get_window(curr_point));
@@ -355,6 +354,87 @@ private:
 		}
 	}
 
+	void paint_non_compressed_mode_part_point(HDC& hdc,
+		graphics_engine& engine,
+		unsigned int first_index,
+		unsigned int last_index,
+		HPEN pen_data_point)
+	{
+		unsigned int index = first_index;
+
+		double last_x = offset + step * index;
+		xy_point last_point = xy_point{ last_x, content[index] };
+
+		index++;
+		double curr_x = last_x + step;
+		xy_point curr_point = xy_point{ curr_x, content[index] };
+
+		SelectObject(hdc, reinterpret_cast<HGDIOBJ>(pen_data_point));
+		paint::rect(hdc, engine.get_window(last_point), 1);
+
+		while (index <= last_index)
+		{
+			last_point = curr_point;
+
+			index++;
+			curr_x = curr_x + step;
+			curr_point = xy_point{ curr_x, content[index] };
+
+			paint::rect(hdc, engine.get_window(last_point), 1);
+		}
+
+		paint::rect(hdc, engine.get_window(curr_point), 1);
+	}
+
+private:
+	void paint_non_compressed_mode(
+		HDC& hdc, 
+		graphics_engine& engine, 
+		unsigned int first_index, 
+		unsigned int last_index,
+		double coefficient_compressed,
+		double limit_compressed)
+	{
+		// smoothing-color functions (line-to-point)
+
+		double start_point_paint = 0.8 * limit_compressed;
+		double end_line_paint = 0.2 * limit_compressed;
+
+		double normalisation_color_point = 0.999 / (2. / std::_Pi * atan(-3. * (1. * 0 - start_point_paint)));
+		double opacity_coefficient_color_data_point = 2. / std::_Pi * normalisation_color_point * atan(-3. * (1. * coefficient_compressed - start_point_paint));
+
+		double normalisation_color_line = 0.999 / (2. / std::_Pi * atan(3. * (1. * limit_compressed - end_line_paint)));
+		double opacity_coefficient_color_data_line = 2. /  std::_Pi * normalisation_color_line * atan(3. * (1. * coefficient_compressed - end_line_paint));
+
+		std::cout << normalisation_color_point << "\t" << normalisation_color_line << "\n";
+
+		if (opacity_coefficient_color_data_line > 0)
+		{
+			COLORREF color_data_line = exclusive::change_ref_color(
+				stock_objects::color.white,
+				stock_objects::color.chart,
+				opacity_coefficient_color_data_line);
+			HPEN pen_data_line = CreatePen(PS_SOLID, 2, color_data_line);
+
+			paint_non_compressed_mode_part_line(hdc, engine, first_index, last_index, pen_data_line);
+
+			DeleteObject(pen_data_line);
+		}
+
+		if (opacity_coefficient_color_data_line < opacity_coefficient_color_data_point)
+		{
+			COLORREF color_data_point = exclusive::change_ref_color(
+				stock_objects::color.white,
+				stock_objects::color.chart,
+				opacity_coefficient_color_data_point);
+			HPEN pen_data_point = CreatePen(PS_SOLID, 1, color_data_point);
+
+			paint_non_compressed_mode_part_point(hdc, engine, first_index, last_index, pen_data_point);
+			
+			DeleteObject(pen_data_point);
+		}
+	}
+
 	void paint_compressed_mode(
 		HDC& hdc, 
 		graphics_engine& engine, 
@@ -368,7 +448,6 @@ private:
 
 		while (index <= last_index)
 		{
-
 			double local_start_index = index;
 			double local_end_index = local_start_index + coefficient_compressed;
 
@@ -396,7 +475,6 @@ private:
 
 			xy_point min_extremum = xy_point{ offset + step * local_start_index, local_min_extremum };
 			xy_point max_extremum = xy_point{ offset + step * local_end_index, local_max_extremum };
-
 
 			paint::line(hdc,
 				engine.get_window(min_extremum),
