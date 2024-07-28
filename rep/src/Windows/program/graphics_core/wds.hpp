@@ -269,6 +269,7 @@ class data
 {
 public:
 	std::vector<double> content;
+	COLORREF color;
 	double step;
 	double offset;
 
@@ -276,7 +277,7 @@ public:
 	void paint(HDC& hdc, graphics_engine& engine)
 	{
 		double x_data_begin = offset;
-		double x_data_end = offset + step * (content.size() - 1);
+		double x_data_end = offset + step * static_cast<double>((content.size() - 1));
 
 		double x_left_limit = engine.get_limit_left_down().get_x();
 		double x_right_limit = engine.get_limit_right_up().get_x();
@@ -299,12 +300,12 @@ public:
 
 		if (x_right_limit < x_data_end)
 		{
-			double delta = x_right_limit;
+			double delta = x_right_limit - offset;
 			last_index = delta / step;
 		}
 
 		// compressed solve
-		unsigned int count_data = engine.get_size().get_x();
+		unsigned int count_data = engine.get_size().get_x() / step;
 		unsigned int count_pixels = engine.get_plot_size().get_x();
 
 		double coefficient_compressed = 
@@ -397,8 +398,8 @@ private:
 	{
 		// smoothing-color functions (line-to-point)
 
-		double start_point_paint = 0.8 * limit_compressed;
-		double end_line_paint = 0.2 * limit_compressed;
+		double start_point_paint = 0.2 * limit_compressed;
+		double end_line_paint = 0.005 * limit_compressed;
 
 		double normalisation_color_point = 0.999 / (2. / std::_Pi * atan(-3. * (1. * 0 - start_point_paint)));
 		double opacity_coefficient_color_data_point = 2. / std::_Pi * normalisation_color_point * atan(-3. * (1. * coefficient_compressed - start_point_paint));
@@ -406,12 +407,10 @@ private:
 		double normalisation_color_line = 0.999 / (2. / std::_Pi * atan(3. * (1. * limit_compressed - end_line_paint)));
 		double opacity_coefficient_color_data_line = 2. /  std::_Pi * normalisation_color_line * atan(3. * (1. * coefficient_compressed - end_line_paint));
 
-		std::cout << normalisation_color_point << "\t" << normalisation_color_line << "\n";
-
 		if (opacity_coefficient_color_data_line > 0)
 		{
 			COLORREF color_data_line = exclusive::change_ref_color(
-				stock_objects::color.white,
+				color,
 				stock_objects::color.chart,
 				opacity_coefficient_color_data_line);
 			HPEN pen_data_line = CreatePen(PS_SOLID, 2, color_data_line);
@@ -424,7 +423,7 @@ private:
 		if (opacity_coefficient_color_data_line < opacity_coefficient_color_data_point)
 		{
 			COLORREF color_data_point = exclusive::change_ref_color(
-				stock_objects::color.white,
+				color,
 				stock_objects::color.chart,
 				opacity_coefficient_color_data_point);
 			HPEN pen_data_point = CreatePen(PS_SOLID, 1, color_data_point);
@@ -442,7 +441,8 @@ private:
 		unsigned int last_index, 
 		double coefficient_compressed)
 	{
-		SelectObject(hdc, reinterpret_cast<HGDIOBJ>(stock_objects::pen.test));
+		HPEN pen = CreatePen(PS_SOLID, 2, color);
+		SelectObject(hdc, reinterpret_cast<HGDIOBJ>(pen));
 
 		double index = first_index;
 
@@ -483,12 +483,14 @@ private:
 			index += coefficient_compressed;
 		}
 	
+		DeleteObject(pen);
 	}
 
 public:
-	void Init(std::vector<double>& load_content, double load_step = 1, double load_offset = 0)
+	void Init(std::vector<double>& load_content, COLORREF load_color = RGB(0xFF, 0xFF, 0xFF), double load_step = 1, double load_offset = 0)
 	{
 		content = load_content;
+		color = load_color;
 		step = load_step;
 		offset = load_offset;
 	}
@@ -496,6 +498,7 @@ public:
 	data() 
 	{ 
 		content.resize(0);
+		color = RGB(0xFF, 0xFF, 0xFF);
 		offset = 0; 
 		step = 0; 
 	};
@@ -801,8 +804,9 @@ private:
 	// paint objects
 	rect_prop _plot;
 	rect_prop _bounds[4];
-	data      _data;
 	axes      _axes;
+
+	std::vector<data>  _data;
 
 private:
 	graphics_engine _engine;
@@ -818,7 +822,7 @@ public:
 		return _engine;
 	}
 
-	data& data()
+	std::vector<data>& data()
 	{
 		return _data;
 	}
@@ -848,7 +852,12 @@ public:
 		_axes.paint_axes(hdc, _engine);
 
 		// test obj
-		_data.paint(hdc, _engine);
+
+		for (auto i = 0; i < _data.size(); i++)
+		{
+			_data[i].paint(hdc, _engine);
+		}
+
 
 		_bounds[0].paint(hdc, stock_objects::pen.bound, stock_objects::brush.bound);
 		_bounds[1].paint(hdc, stock_objects::pen.bound, stock_objects::brush.bound);
@@ -977,4 +986,4 @@ wdisplay wds;
 #define Engine_Hold_Start(pos)             wds.chart().engine().event_hold_start(pos)
 #define Engine_Hold_Stop                   wds.chart().engine().event_hold_stop()
 
-#define Data_Init(content, step, offset)   wds.chart().data().Init(content, step, offset)
+#define Data                               wds.chart().data()

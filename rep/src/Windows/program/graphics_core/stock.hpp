@@ -1,8 +1,14 @@
 #pragma once
 
 
-// // // // // // // // //      main timer     // // // // // // // // // //
+// // // // // // // // //   fast performance   // // // // // // // // // //
+namespace fast_performance
+{
+	double fps;
+}
 
+
+// // // // // // // // //      main timer     // // // // // // // // // //
 namespace main_timer
 {
 	size_t id = 0;
@@ -11,7 +17,6 @@ namespace main_timer
 
 
 // // // // // // // // //         keys        // // // // // // // // // //
-
 namespace keys
 {
 	bool shift = false;
@@ -20,7 +25,6 @@ namespace keys
 
 
 // // // // // // // // //    stock objects    // // // // // // // // // //
-
 namespace stock_objects
 {
 	struct

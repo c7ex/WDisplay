@@ -11,8 +11,8 @@ protected:
 	double _y;
 
 public:
-	double get_x(){return _x;}
-	double get_y(){return _y;}
+	inline double get_x(){return _x;}
+	inline double get_y(){return _y;}
 
 public:
 	void y_invert()
