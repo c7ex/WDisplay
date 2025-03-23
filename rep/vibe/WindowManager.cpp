@@ -2,6 +2,8 @@
 #include <iostream>
 #include "widgets.h"
 
+#define FUNCTIONAL_MODE
+
 void UpdateStatusBar(HWND statusBar, GraphState* GraphState) {
     Point2D WindowSize = GraphState->GetWindowSize();
     Point2D MousePosition = GraphState->GetMousePosition();
@@ -73,8 +75,8 @@ bool WindowManager::Create(const wchar_t* title, int width, int height) {
     }
 
     Point2D size(width, height);
-    graphState.UpdateWindowSize(width, height);
-    graphState.UpdateAreaSpan(1, 1);
+    graphState.SetWindowDefaultSize(width, height);
+    graphState.UpdateAreaSpan(100, 200);
 
     UpdateStatusBar(hStatusBar, &graphState);
 
