@@ -2,226 +2,195 @@
 #include <iostream>
 #include "widgets.h"
 
-#define FUNCTIONAL_MODE
+void UpdateStatusBar(HWND statusBar, GraphState* graphState) {
+    const Size2d windowSize = graphState->GetWindowSize();
+    const Position2d mousePos = graphState->GetMousePosition();
+    const Size2d visibleArea = graphState->GetVisibleArea();
+    const Position2d worldCoord = graphState->GetCurrentCoordinates();
+    const Position2d referencePos = graphState->GetReferencePosition();
 
-void UpdateStatusBar(HWND statusBar, GraphState* GraphState) {
-    Point2D WindowSize = GraphState->GetWindowSize();
-    Point2D MousePosition = GraphState->GetMousePosition();
-    Point2D AreaSpan = GraphState->GetAreaSpan();
-    Point2D Coord = GraphState->GetCoord();
-    Point2D Ref = GraphState->GetReference();
-    Point2D Data[] = { AreaSpan, Coord, MousePosition, WindowSize, Ref };
-    widgets::status_bar::UpdateData(statusBar, 5, Data);
+    const Vec2d statusData[] = {
+        visibleArea,       // Размер видимой области
+        worldCoord,        // Текущие мировые координаты
+        mousePos,          // Позиция мыши в пикселях
+        windowSize,        // Размер окна
+        referencePos       // Референсная позиция
+    };
+
+    widgets::status_bar::UpdateData(statusBar, 5, statusData);
 }
 
 void RepaintGraphArea(HWND hwnd, HWND statusBar) {
-    RECT graphRect;
-    GetClientRect(hwnd, &graphRect);
+    RECT clientRect;
+    GetClientRect(hwnd, &clientRect);
+
     RECT statusRect;
     GetWindowRect(statusBar, &statusRect);
-    MapWindowPoints(NULL, hwnd, (LPPOINT)&statusRect, 2);
-    int statusBarHeight = statusRect.bottom - statusRect.top;
-    graphRect.bottom -= statusBarHeight;
-    InvalidateRect(hwnd, &graphRect, FALSE);
+    MapWindowPoints(nullptr, hwnd, reinterpret_cast<POINT*>(&statusRect), 2);
+
+    const int statusHeight = statusRect.bottom - statusRect.top;
+    clientRect.bottom -= statusHeight;
+
+    InvalidateRect(hwnd, &clientRect, FALSE);
 }
 
 WindowManager::WindowManager(const std::wstring& className)
-    : hwnd(NULL), hInstance(GetModuleHandle(NULL)), className(className) {
+    : hwnd_(nullptr),
+    hInstance_(GetModuleHandle(nullptr)),
+    className_(className),
+    statusBar_(nullptr) {
+
     WNDCLASS wc = {};
     wc.lpfnWndProc = WindowManager::WindowProc;
-    wc.hInstance = hInstance;
-    wc.lpszClassName = className.c_str();
-    wc.hCursor = LoadCursor(NULL, IDC_ARROW);
-    wc.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+    wc.hInstance = hInstance_;
+    wc.lpszClassName = className_.c_str();
+    wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+    wc.hbrBackground = reinterpret_cast<HBRUSH>(COLOR_WINDOW + 1);
 
     if (!RegisterClass(&wc)) {
-        MessageBox(NULL, L"Ошибка регистрации класса окна!", L"Ошибка", MB_ICONERROR);
+        MessageBox(nullptr, L"Window class registration failed!", L"Error", MB_ICONERROR);
     }
 }
 
 WindowManager::~WindowManager() {
-    if (hStatusBar) {
-        DestroyWindow(hStatusBar);
-        hStatusBar = NULL;
-    }
-    if (hwnd) {
-        DestroyWindow(hwnd);
-        hwnd = NULL;
-    }
-    
-    UnregisterClass(className.c_str(), hInstance);
+    if (statusBar_) DestroyWindow(statusBar_);
+    if (hwnd_) DestroyWindow(hwnd_);
+    UnregisterClass(className_.c_str(), hInstance_);
 }
 
 bool WindowManager::Create(const wchar_t* title, int width, int height) {
-    hwnd = CreateWindowEx(
-        0, className.c_str(), title, WS_OVERLAPPEDWINDOW,
+    hwnd_ = CreateWindowEx(
+        0, className_.c_str(), title, WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT, width, height,
-        NULL, NULL, hInstance, this
+        nullptr, nullptr, hInstance_, this
     );
 
-    if (hwnd == NULL) {
-        MessageBox(NULL, L"Ошибка создания окна!", L"Ошибка", MB_ICONERROR);
+    if (!hwnd_) {
+        MessageBox(nullptr, L"Window creation failed!", L"Error", MB_ICONERROR);
         return false;
     }
 
-    hStatusBar = CreateWindowEx(
-        0, STATUSCLASSNAME, NULL,
+    statusBar_ = CreateWindowEx(
+        0, STATUSCLASSNAME, nullptr,
         WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
-        0, 0, 0, 0, hwnd, NULL, hInstance, NULL
+        0, 0, 0, 0, hwnd_, nullptr, hInstance_, nullptr
     );
 
-    if (!hStatusBar) {
-        MessageBox(NULL, L"Ошибка создания статус-бара!", L"Ошибка", MB_ICONERROR);
+    if (!statusBar_) {
+        MessageBox(nullptr, L"Status bar creation failed!", L"Error", MB_ICONERROR);
     }
 
-    Point2D size(width, height);
-    graphState.SetWindowDefaultSize(width, height);
-    graphState.UpdateAreaSpan(100, 200);
+    graphState_.InitializeWindowSize(width, height);
+    graphState_.SetVisibleArea(60, 200);
 
-    UpdateStatusBar(hStatusBar, &graphState);
+    UpdateStatusBar(statusBar_, &graphState_);
+    widgets::status_bar::UpdateSections(statusBar_, 5, width);
 
-    widgets::status_bar::UpdateSections(hStatusBar, 5, graphState.GetWindowSize().x);
-
-    ShowWindow(hwnd, SW_SHOW);
-    UpdateWindow(hwnd);
+    ShowWindow(hwnd_, SW_SHOW);
+    UpdateWindow(hwnd_);
     return true;
 }
 
 void WindowManager::Run() {
     MSG msg = {};
-    while (GetMessage(&msg, NULL, 0, 0)) {
+    while (GetMessage(&msg, nullptr, 0, 0)) {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 }
 
-LRESULT CALLBACK WindowManager::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    WindowManager* pThis = nullptr;
-    GraphState* pGraphState = nullptr;
+LRESULT CALLBACK WindowManager::WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    WindowManager* manager = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
 
-    if (uMsg == WM_NCCREATE) {
-        CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
-        pThis = reinterpret_cast<WindowManager*>(pCreate->lpCreateParams);
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
-    }
-    else {
-        pThis = reinterpret_cast<WindowManager*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-        pGraphState = reinterpret_cast<GraphState*>(&(pThis->graphState));
+    if (msg == WM_NCCREATE) {
+        CREATESTRUCT* create = reinterpret_cast<CREATESTRUCT*>(lParam);
+        manager = reinterpret_cast<WindowManager*>(create->lpCreateParams);
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(manager));
+        return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 
-    if (pThis == nullptr && uMsg != WM_NCCREATE) {
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    if (!manager) {
+        return DefWindowProc(hwnd, msg, wParam, lParam);
     }
 
-    if (pGraphState == nullptr){
-        return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    switch (msg) {
+    case WM_DESTROY:
+        PostQuitMessage(0);
+        return 0;
+
+    case WM_PAINT: {
+        PAINTSTRUCT ps;
+        HDC hdc = BeginPaint(hwnd, &ps);
+
+        RECT clientRect;
+        GetClientRect(hwnd, &clientRect);
+
+        // Двойная буферизация
+        HDC memDC = CreateCompatibleDC(hdc);
+        HBITMAP memBmp = CreateCompatibleBitmap(hdc, clientRect.right, clientRect.bottom);
+        HBITMAP oldBmp = static_cast<HBITMAP>(SelectObject(memDC, memBmp));
+
+        // Очистка фона
+        FillRect(memDC, &clientRect, CreateSolidBrush(RGB(0, 56, 89)));
+
+        // Отрисовка графика
+        manager->graphState_.RenderGraph(memDC);
+
+        // Копирование на экран
+        BitBlt(hdc, 0, 0, clientRect.right, clientRect.bottom, memDC, 0, 0, SRCCOPY);
+
+        // Очистка
+        SelectObject(memDC, oldBmp);
+        DeleteObject(memBmp);
+        DeleteDC(memDC);
+
+        EndPaint(hwnd, &ps);
+        return 0;
     }
 
-    switch (uMsg)
-    {
-        case WM_DESTROY:
-            if (pThis->hStatusBar) {
-                DestroyWindow(pThis->hStatusBar);
-                pThis->hStatusBar = NULL;
-            }
-            PostQuitMessage(0);
-            return 0;
+    case WM_ERASEBKGND:
+        return 1;
 
-        case WM_PAINT:
-        {
-            PAINTSTRUCT ps;
-            HDC hdc = BeginPaint(hwnd, &ps);
+    case WM_SIZE:
+        manager->graphState_.UpdateWindowSize(lParam);
+        UpdateStatusBar(manager->statusBar_, &manager->graphState_);
+        widgets::status_bar::UpdateSections(manager->statusBar_, 5,
+            static_cast<int>(manager->graphState_.GetWindowSize().x));
+        RepaintGraphArea(hwnd, manager->statusBar_);
+        return 0;
 
-            // Получаем размеры всей клиентской области
-            RECT clientRect;
-            GetClientRect(hwnd, &clientRect);
+    case WM_MOUSEMOVE:
+        manager->graphState_.UpdateMousePosition(lParam);
+        manager->graphState_.UpdateDrag(lParam);
+        manager->graphState_.UpdateCoordinates();
+        UpdateStatusBar(manager->statusBar_, &manager->graphState_);
+        RepaintGraphArea(hwnd, manager->statusBar_);
+        return 0;
 
-            // Создаем буфер в памяти
-            HDC memDC = CreateCompatibleDC(hdc);
-            HBITMAP memBitmap = CreateCompatibleBitmap(hdc, clientRect.right, clientRect.bottom);
-            HBITMAP oldBitmap = (HBITMAP)SelectObject(memDC, memBitmap);
+    case WM_LBUTTONDOWN:
+        manager->graphState_.StartDragging(lParam);
+        return 0;
 
-            // Очищаем фон в буфере
-            HBRUSH hBrush = CreateSolidBrush(RGB(0, 56, 89));  // Темно-серый
-            FillRect(memDC, &clientRect, hBrush);
-            DeleteObject(hBrush);  // Удаляем кисть после использования
+    case WM_LBUTTONUP:
+        manager->graphState_.StopDragging(lParam);
+        return 0;
 
-            // Рисуем график в буфере
-            pGraphState->DrawGraph(memDC);
+    case WM_MOUSEWHEEL: {
+        POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+        ScreenToClient(hwnd, &pt);
+        manager->graphState_.UpdateMousePosition(pt.x, pt.y);
 
-            // Переносим результат на экран
-            BitBlt(hdc, 0, 0, clientRect.right, clientRect.bottom, memDC, 0, 0, SRCCOPY);
+        const ScaleDirection direction = (GET_WHEEL_DELTA_WPARAM(wParam) < 0)
+            ? ScaleDirection::ZoomOut
+            : ScaleDirection::ZoomIn;
 
-            // Очистка
-            SelectObject(memDC, oldBitmap);
-            DeleteObject(memBitmap);
-            DeleteDC(memDC);
+        manager->graphState_.ApplyZoom(direction);
 
-            EndPaint(hwnd, &ps);
-            return 0;
-        }
-
-        case WM_ERASEBKGND:
-            return 1; // Предотвращаем стандартную очистку, чтобы избежать мерцания
-
-
-        case WM_SIZE:
-        {
-            pGraphState->UpdateWindowSize(lParam);
-            pGraphState->UpdateMousePosition(lParam);
-            pGraphState->UpdateCoord();
-
-            UpdateStatusBar(pThis->hStatusBar, pGraphState);
-            widgets::status_bar::UpdateSections(pThis->hStatusBar, 5, pGraphState->GetWindowSize().x);
-            RepaintGraphArea(hwnd, pThis->hStatusBar);
-            return 0;
-        }
-
-        case WM_MOUSEMOVE:
-        {
-            pGraphState->UpdateMousePosition(lParam);
-            pThis->graphState.UpdateTugboat(lParam);
-            pGraphState->UpdateCoord();
-            UpdateStatusBar(pThis->hStatusBar, pGraphState);
-            widgets::status_bar::UpdateSections(pThis->hStatusBar, 5, pGraphState->GetWindowSize().x);
-            RepaintGraphArea(hwnd, pThis->hStatusBar);
-            return 0;
-        }
-
-        case WM_LBUTTONDOWN:
-        {
-            pThis->graphState.BeginTugboat(lParam);
-            return 0;
-        }
-
-        case WM_LBUTTONUP:
-        {
-            pThis->graphState.StopTugboat(lParam);
-            return 0;
-        }
-
-        case WM_MOUSEWHEEL:
-        {
-            // start hardcode
-            // lParam(window) -> lParam(client)
-            int x = GET_X_LPARAM(lParam);
-            int y = GET_Y_LPARAM(lParam);
-            POINT pt = { x, y };
-            ScreenToClient(hwnd, &pt);
-            pThis->graphState.UpdateMousePosition(pt.x, pt.y);
-            // end hardcode
-
-            pThis->graphState.UpdateScale(
-                GET_WHEEL_DELTA_WPARAM(wParam) < 0 ? 
-                ScaleDirection::Decrease: 
-                ScaleDirection::Increase);
-
-            UpdateStatusBar(pThis->hStatusBar, pGraphState);
-            widgets::status_bar::UpdateSections(pThis->hStatusBar, 5, pGraphState->GetWindowSize().x);
-            RepaintGraphArea(hwnd, pThis->hStatusBar);
-            return 0;
-        }
+        UpdateStatusBar(manager->statusBar_, &manager->graphState_);
+        RepaintGraphArea(hwnd, manager->statusBar_);
+        return 0;
+    }
     }
 
-    return DefWindowProc(hwnd, uMsg, wParam, lParam);
+    return DefWindowProc(hwnd, msg, wParam, lParam);
 }

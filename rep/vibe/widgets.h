@@ -5,7 +5,7 @@
 #include <Commctrl.h>
 #include <cstdlib>
 
-#include "Point2D.h"
+#include "Vec2d.h"
 
 namespace widgets {
     namespace status_bar {
@@ -39,7 +39,7 @@ namespace widgets {
             }
         }
 
-        inline void UpdateData(HWND hwnd, int countSections, Point2D* data) {
+        inline void UpdateData(HWND hwnd, int countSections,const Vec2d* data) {
             for (int i = 0; i < countSections; ++i) {
                 wchar_t status[64];
                 swprintf(status, 64, captions[i], data[i].x, data[i].y);

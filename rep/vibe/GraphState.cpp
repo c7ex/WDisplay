@@ -1,359 +1,309 @@
 #include "GraphState.h"
 #include <ctime>
 #include <iostream>
-
-// Create ->
+#include "Other.h"
 
 GraphState::GraphState() {}
 
-
-// TugboatState realization ->
-
-Point2D GraphState::GetReference() const {
-    return tugboatState.reference_position;
+// Реализация работы с перемещением графика
+Position2d GraphState::GetReferencePosition() const {
+    return tugboat_state_.reference_position;
 }
 
-void GraphState::BeginTugboat(const LPARAM& lParam) {
-    if (tugboatState.hold == false) {
+void GraphState::StartDragging(const LPARAM& lParam) {
+    if (!tugboat_state_.is_active) {
         UpdateMousePosition(lParam);
-        tugboatState.last_reference_position = tugboatState.reference_position;
-        tugboatState.hold_position = windowState.mouse_position;
-        tugboatState.hold = true;
+        tugboat_state_.last_reference_position = tugboat_state_.reference_position;
+        tugboat_state_.hold_position = window_state_.mouse_position;
+        tugboat_state_.is_active = true;
     }
 }
 
-void GraphState::UpdateTugboat(const LPARAM& lParam) {
-    if (tugboatState.hold == true) {
+void GraphState::UpdateDrag(const LPARAM& lParam) {
+    if (tugboat_state_.is_active) {
         UpdateMousePosition(lParam);
-        tugboatState.current_position = windowState.mouse_position;
-        Point2D pixel_scale = area_span / windowState.size_current; // 0xAA?
-        Point2D divergence = tugboatState.hold_position - tugboatState.current_position;
-        Point2D abstruct_offset = pixel_scale * divergence;
-        abstruct_offset.Y_inversion();
-        tugboatState.reference_position = tugboatState.last_reference_position + abstruct_offset;
+        tugboat_state_.current_position = window_state_.mouse_position;
+        const Scale2d pixel_scale = visible_area_ / window_state_.current_plot_size;
+        Offset2d drag_offset = tugboat_state_.hold_position - tugboat_state_.current_position;
+        Offset2d world_offset = pixel_scale * drag_offset;
+        world_offset.invert_y();
+        tugboat_state_.reference_position = tugboat_state_.last_reference_position + world_offset;
     }
 }
 
-void GraphState::StopTugboat(const LPARAM& lParam) {
-    UpdateTugboat(lParam);
-    if (tugboatState.hold == true)
-        tugboatState.hold = false;
+void GraphState::StopDragging(const LPARAM& lParam) {
+    UpdateDrag(lParam);
+    tugboat_state_.is_active = false;
 }
 
-void GraphState::InstallReference() {
-    //Point2D window_offset = Point2D(windowState.margin.left, windowState.margin.bottom);
+// Реализация масштабирования
+void GraphState::ApplyZoom(ScaleDirection direction) {
+    if (tugboat_state_.is_active) return;
 
-}
-
-
-// ZoomState realization ->
-
-void GraphState::UpdateScale(ScaleDirection scaleDirection) {
-    if (tugboatState.hold == true) return;
-#define CURSORZOOM
 #ifdef CURSORZOOM
-    Point2D save_abstruct_mouse_position = 
-        Pixel2Abstruct(windowState.mouse_position.x, windowState.mouse_position.y);
+    const Position2d saved_world_pos =
+        ConvertToWorldCoords(window_state_.mouse_position.x, window_state_.mouse_position.y);
 #else
-    Point2D save_area_span = area_span;
+    const Size2d saved_visible_area = visible_area_;
 #endif
 
-    if (scaleDirection == ScaleDirection::Increase) area_span /= zoomState.growth_default_scale;
-    if (scaleDirection == ScaleDirection::Decrease) area_span *= zoomState.growth_default_scale;
+    if (direction == ScaleDirection::ZoomIn) {
+        visible_area_ /= zoom_state_.default_scale_factor;
+    }
+    else {
+        visible_area_ *= zoom_state_.default_scale_factor;
+    }
 
-#ifndef CURSORZOOM
-    // central zoom
-    Point2D reference_offset = save_area_span - area_span;
-    reference_offset /= 2.;
-    tugboatState.reference_position += reference_offset;
+#ifdef CURSORZOOM
+    const Position2d new_world_pos =
+        ConvertToWorldCoords(window_state_.mouse_position.x, window_state_.mouse_position.y);
+    const Offset2d pos_offset = saved_world_pos - new_world_pos;
+    tugboat_state_.reference_position += pos_offset;
 #else
-    // cursor zoom
-    Point2D new_abstruct_mouse_position = 
-        Pixel2Abstruct(windowState.mouse_position.x, windowState.mouse_position.y);
-    Point2D delta_abstruct_mouse_position = save_abstruct_mouse_position - new_abstruct_mouse_position;
-    tugboatState.reference_position += delta_abstruct_mouse_position;
+    const Offset2d center_offset = (saved_visible_area - visible_area_) / 2.0;
+    tugboat_state_.reference_position += center_offset;
 #endif
 
-    UpdateCoord();
+    UpdateCoordinates();
 }
 
+// Работа с размерами окна
+RECT GraphState::GetPlotArea() const {
+    return window_state_.plot_area;
+}
 
-// Other realization ->
-
-Point2D GraphState::GetWindowSize() const {
-    return windowState.size_current;
+Size2d GraphState::GetWindowSize() const {
+    return window_state_.current_window_size;
 }
 
 void GraphState::UpdateWindowSize(const LPARAM& lParam) {
-    this->windowState.size_current.x = LOWORD(lParam);
-    this->windowState.size_current.y = HIWORD(lParam);
-    windowState.size_compress = windowState.size_current / windowState.size_default;
-    windowState.size_plot_current = windowState.size_default * windowState.size_compress;
+    window_state_.current_window_size.x = LOWORD(lParam);
+    window_state_.current_window_size.y = HIWORD(lParam);
+    window_state_.size_compression = window_state_.current_window_size / window_state_.default_window_size;
 
-    // set points plot in window coordinates
-    windowState.points_plot = RECT
-    {
-        ((long)((double)windowState.margin.left * windowState.size_compress.x)),
-        ((long)(((double)windowState.margin.top) * windowState.size_compress.y)),
-        (long)(windowState.size_current.x - ((double)windowState.margin.right * windowState.size_compress.x)),
-        (long)(windowState.size_current.y - ((double)windowState.margin.bottom * windowState.size_compress.y))
+    // Область графика в координатах окна
+    window_state_.plot_area = {
+        static_cast<long>(window_state_.margins.left * window_state_.size_compression.x),
+        static_cast<long>(window_state_.margins.top * window_state_.size_compression.y),
+        static_cast<long>(window_state_.current_window_size.x - window_state_.margins.right * window_state_.size_compression.x),
+        static_cast<long>(window_state_.current_window_size.y - window_state_.margins.bottom * window_state_.size_compression.y)
     };
 
-    windowState.reference_window_offset = Point2D(
-        windowState.points_plot.left,
-        windowState.points_plot.bottom);
+    window_state_.plot_reference_offset = Position2d(
+        window_state_.plot_area.left,
+        window_state_.plot_area.bottom);
+
+    window_state_.current_plot_size = window_state_.default_plot_size * window_state_.size_compression;
 }
 
-void GraphState::SetWindowDefaultSize(int width, int height) {
-    windowState.size_default.x = width;
-    windowState.size_default.y = height;
-    windowState.size_current = windowState.size_default;
-    windowState.size_compress = windowState.size_current / windowState.size_default;
+void GraphState::InitializeWindowSize(int width, int height) {
+    window_state_.default_window_size = Size2d(width, height);
+    window_state_.current_window_size = window_state_.default_window_size;
+    window_state_.size_compression = Size2d(1.0, 1.0);
 
-    // set points plot in window coordinates
-    windowState.points_plot = RECT
-    {
-        (windowState.margin.left),
-        (windowState.margin.top),
-        ((long)windowState.size_current.x - windowState.margin.right),
-        ((long)windowState.size_current.y - windowState.margin.bottom)
+    window_state_.plot_area = {
+        window_state_.margins.left,
+        window_state_.margins.top,
+        static_cast<long>(window_state_.current_window_size.x - window_state_.margins.right),
+        static_cast<long>(window_state_.current_window_size.y - window_state_.margins.bottom)
     };
 
-    std::cout << windowState.points_plot.bottom << std::endl;
+    window_state_.plot_reference_offset = Position2d(
+        window_state_.plot_area.left,
+        window_state_.plot_area.bottom);
 
-    windowState.reference_window_offset = Point2D(
-        windowState.points_plot.left,
-        windowState.points_plot.bottom);
+    window_state_.default_plot_size = Size2d(
+        window_state_.default_window_size.x - (window_state_.margins.left + window_state_.margins.right),
+        window_state_.default_window_size.y - (window_state_.margins.bottom + window_state_.margins.top));
 
-    windowState.size_plot_default = Point2D(
-        windowState.size_default.x - (windowState.margin.left + windowState.margin.right),
-        windowState.size_default.y - (windowState.margin.bottom + windowState.margin.top));
-
-    windowState.size_plot_current = windowState.size_plot_default;
+    window_state_.current_plot_size = window_state_.default_plot_size;
 }
 
-Point2D GraphState::GetMousePosition() const {
-    return windowState.mouse_position;
+// Работа с координатами мыши
+Position2d GraphState::GetMousePosition() const {
+    return window_state_.mouse_position;
 }
 
 void GraphState::UpdateMousePosition(const LPARAM& lParam) {
-    this->windowState.mouse_position.x = LOWORD(lParam);
-    this->windowState.mouse_position.y = HIWORD(lParam);
+    window_state_.mouse_position.x = LOWORD(lParam);
+    window_state_.mouse_position.y = HIWORD(lParam);
 }
 
 void GraphState::UpdateMousePosition(double x, double y) {
-    this->windowState.mouse_position.x = x;
-    this->windowState.mouse_position.y = y;
+    window_state_.mouse_position.x = x;
+    window_state_.mouse_position.y = y;
 }
 
-Point2D GraphState::GetAreaSpan() const {
-    return area_span;
+// Работа с видимой областью
+Size2d GraphState::GetVisibleArea() const {
+    return visible_area_;
 }
 
-void GraphState::UpdateAreaSpan(int x_size, int y_size) {
-    this->area_span.x = x_size;
-    this->area_span.y = y_size;
+void GraphState::SetVisibleArea(double width, double height) {
+    visible_area_.x = width;
+    visible_area_.y = height;
 }
 
+// Преобразование координат
+void GraphState::UpdateCoordinates() {
+    current_coord_ = ConvertToWorldCoords(window_state_.mouse_position.x, window_state_.mouse_position.y);
+}
 
-// Coord realization ->
+Position2d GraphState::GetCurrentCoordinates() const {
+    return current_coord_;
+}
 
-void GraphState::UpdateCoord() {
-    coord = Pixel2Abstruct(windowState.mouse_position.x, windowState.mouse_position.y);
+Position2d GraphState::ConvertToPixelCoords(double world_x, double world_y) const {
+    const Position2d world_pos(world_x, world_y);
+    const Offset2d world_offset = world_pos - tugboat_state_.reference_position;
+    const Scale2d world_to_pixel = window_state_.current_plot_size / visible_area_;
+    Offset2d pixel_offset = world_offset * world_to_pixel;
+    pixel_offset.invert_y();
+    return window_state_.plot_reference_offset + pixel_offset;
+}
+
+Position2d GraphState::ConvertToWorldCoords(int pixel_x, int pixel_y) const {
+    const Position2d pixel_pos(pixel_x, pixel_y);
+    const Offset2d pixel_offset = pixel_pos - window_state_.plot_reference_offset;
+    const Scale2d pixel_to_world = visible_area_ / window_state_.current_plot_size;
+    Offset2d world_offset = pixel_offset * pixel_to_world;
+    world_offset.invert_y();
+    return tugboat_state_.reference_position + world_offset;
+}
+
+HPEN CreateTransparentPen(COLORREF bgColor, COLORREF fgColor, double alpha) {
+    alpha = max(0.0, min(1.0, alpha)); // Ограничиваем alpha в пределах [0,1]
+
+    // Извлекаем компоненты цветов
+    int bgR = GetRValue(bgColor), bgG = GetGValue(bgColor), bgB = GetBValue(bgColor);
+    int fgR = GetRValue(fgColor), fgG = GetGValue(fgColor), fgB = GetBValue(fgColor);
+
+    // Вычисляем итоговый цвет с учетом прозрачности
+    int blendedR = static_cast<int>(bgR * (1 - alpha) + fgR * alpha);
+    int blendedG = static_cast<int>(bgG * (1 - alpha) + fgG * alpha);
+    int blendedB = static_cast<int>(bgB * (1 - alpha) + fgB * alpha);
+
+    // Создаём перо с получившимся цветом
+    return CreatePen(PS_SOLID, 1, RGB(blendedR, blendedG, blendedB));
+}
+
+// Отрисовка графика
+void GraphState::RenderGraph(const HDC& hdc) {
+    HPEN grid_pen;
+    HPEN current_pen;
+    HBRUSH current_brush;
+
+    // Границы области рисования
+    const int left = window_state_.plot_area.left;
+    const int top = window_state_.plot_area.top;
+    const int right = window_state_.plot_area.right;
+    const int bottom = window_state_.plot_area.bottom;
+
+    // Установка области отсечения
+    HRGN clip_region = CreateRectRgn(left, top, right, bottom);
+    SelectClipRgn(hdc, clip_region);
+
+    // current lines
+    const Size2d slp = axes_state_.GetOptimalGridStep(visible_area_);
+
+    // lines > 1
+    const Size2d slh = axes_state_.GetHighGridStep();
+
+    // lines > 100
+    const Size2d sll = axes_state_.GetLowGridStep();
+
+    std::cout << "scale\t" << axes_state_.scales.x << std::endl;
+    std::cout << "sl high\t" << slh.x << std::endl;
+    std::cout << "sl present\t" << slp.x << std::endl;
+    std::cout << "sl low\t" << sll.x << std::endl << std::endl;
+
+    Size2d test_alpha_h = axes_state_.Alpha(visible_area_, slh);
+    Size2d test_alpha_p = axes_state_.Alpha(visible_area_, slp);
+    Size2d test_alpha_l = axes_state_.Alpha(visible_area_, sll);
+
+    //std::cout << "sl high\t" << test_alpha_h.x << std::endl;
+    //std::cout << "sl present\t" << test_alpha_p.x << std::endl;
+    //std::cout << "sl low\t" << test_alpha_l.x << std::endl << std::endl;
+
+    COLORREF back_color = RGB(0, 56, 89);
+    COLORREF grid_color_h = RGB(250, 0, 0);
+    COLORREF grid_color_p = RGB(0, 250, 0);
+    COLORREF grid_color_l = RGB(0, 0, 100);
     
-    //Point2D pixel_scale = area_span / windowState.size_plot_current; //0xAA
-    //Point2D relative_coord = pixel_scale * windowState.mouse_position;
-    //double inverse_y = area_span.y - relative_coord.y;
+    // Рисование сетки
+    grid_pen = CreateTransparentPen(back_color, grid_color_l, test_alpha_l.x);
+    current_pen = (HPEN)SelectObject(hdc, grid_pen);
+    axes_state_.DrawGrid(hdc, *this, sll, GridDrawSelection::Vertical);
+    SelectObject(hdc, current_pen);
+    DeleteObject(grid_pen);
 
-    //coord = Point2D(
-    //    tugboatState.reference_position.x + relative_coord.x,
-    //    tugboatState.reference_position.y + inverse_y
-    //);
-}
+    grid_pen = CreateTransparentPen(back_color, grid_color_l, test_alpha_l.y);
+    current_pen = (HPEN)SelectObject(hdc, grid_pen);
+    axes_state_.DrawGrid(hdc, *this, sll, GridDrawSelection::Horizontal);
+    SelectObject(hdc, current_pen);
+    DeleteObject(grid_pen);
 
-Point2D GraphState::GetCoord() const {
-    return coord;
-}
+    grid_pen = CreateTransparentPen(back_color, grid_color_p, test_alpha_p.x);
+    current_pen = (HPEN)SelectObject(hdc, grid_pen);
+    axes_state_.DrawGrid(hdc, *this, slp, GridDrawSelection::Vertical);
+    SelectObject(hdc, current_pen);
+    DeleteObject(grid_pen);
 
-/*  -> Входные данные - абстрактные координаты
-    1. Вычесть из текущих абстрактных координат референсные абстрактные коррдинаты
-    2. Определить вес пикселя в абстрактных координатах
-    3. Определить расстояние в пикселях от референсной абстрактной точки
-    4. Перевести в координаты окна: Y - инверсия
-*/
-Point2D GraphState::Abstruct2Pixel(double x, double y) const {
-    // new
-    Point2D input_abstruct_position = Point2D(x, y);
-    Point2D delta = input_abstruct_position - tugboatState.reference_position;
-    Point2D scale_abstruct = windowState.size_plot_current / area_span;
-    Point2D relative_window_offset = delta * scale_abstruct;
-    relative_window_offset.Y_inversion();
-    Point2D pixel_position = windowState.reference_window_offset + relative_window_offset;
+    grid_pen = CreateTransparentPen(back_color, grid_color_p, test_alpha_p.y);
+    current_pen = (HPEN)SelectObject(hdc, grid_pen);
+    axes_state_.DrawGrid(hdc, *this, slp, GridDrawSelection::Horizontal);
+    SelectObject(hdc, current_pen);
+    DeleteObject(grid_pen);
 
-    // very old
-    //Point2D current_point(x, (y)); //+
-    //Point2D relative_coord = current_point - tugboatState.reference_position; //+
-    //double inverse_y = area_span.y - relative_coord.y; //+
-    //relative_coord.y = inverse_y; // +
-    //Point2D pixel_position = relative_coord * pixel_scale; // +
-    
-    return pixel_position;
-}
+    grid_pen = CreateTransparentPen(back_color, grid_color_h, test_alpha_h.x);
+    current_pen = (HPEN)SelectObject(hdc, grid_pen);
+    axes_state_.DrawGrid(hdc, *this, slh, GridDrawSelection::Vertical);
+    SelectObject(hdc, current_pen);
+    DeleteObject(grid_pen);
 
-/*  -> Входные данные - координаты окна
-    1. Посчитать расстояние от точки референса до входных данных [в пикселях]
-    3. Инвертировать Y, т.к. ось инвертирована
-    4. Перевести дельту [в пикселях] в [абстрактные координаты] через (area_span / plot_size)
-    5. К абстракстному значению референсной точки прибавить дельту
-*/
-Point2D GraphState::Pixel2Abstruct(int x, int y) const {
-    // new
-    Point2D pixel_position = Point2D(x, y);
-    Point2D delta = pixel_position - windowState.reference_window_offset;
-    Point2D scale_pixel = area_span / windowState.size_plot_current;
-    Point2D abstruct_delta = delta * scale_pixel;
-    abstruct_delta.Y_inversion();
-    Point2D abstruct_coord = tugboatState.reference_position + abstruct_delta;
+    grid_pen = CreateTransparentPen(back_color, grid_color_h, test_alpha_h.y);
+    current_pen = (HPEN)SelectObject(hdc, grid_pen);
+    axes_state_.DrawGrid(hdc, *this, slh, GridDrawSelection::Horizontal);
+    SelectObject(hdc, current_pen);
+    DeleteObject(grid_pen);
 
-    // very old
-    //Point2D current_point((double)x, (double)(window_size.y - y)); // +
-    //Point2D relative_coord = current_point * abstruct_scale; // +
-    //Point2D abstruct_coord = tugboatState.reference_position + relative_coord; // +
+    // Рисование рамки
+    HPEN border_pen = CreatePen(PS_SOLID, 1, RGB(250, 250, 250));
+    current_pen = (HPEN)SelectObject(hdc, border_pen);
 
-    return abstruct_coord;
-}
+    MoveToEx(hdc, left, bottom, NULL);
+    LineTo(hdc, right, bottom);
+    LineTo(hdc, right, top);
+    LineTo(hdc, left, top);
+    LineTo(hdc, left, bottom);
 
-double AxesState::SearchOptimalDiscret(AxesSelection axesSelection, Point2D span) {
-    double current_span = 0;
-    double current_minimal_count_lines = 0;
+    // Центральная точка (только для центрального масштабирования)
+#ifndef CURSORZOOM
+    const long center_x = left + (right - left) / 2;
+    const long center_y = top + (bottom - top) / 2;
+    Ellipse(hdc, center_x - 1, center_y - 1, center_x + 1, center_y + 1);
+#endif
 
-    if (axesSelection == AxesSelection::xAxes) { 
-        current_span = span.x;
-        current_minimal_count_lines = minimal_count_lines.x;
-    }
+    SelectObject(hdc, current_pen);
+    DeleteObject(border_pen);
 
-    if (axesSelection == AxesSelection::yAxes) {
-        current_span = span.y;
-        current_minimal_count_lines = minimal_count_lines.y;
-    }
+    // Рисование прямоугольника (20,20,30,30)
+    HPEN rect_pen = CreatePen(PS_SOLID, 1, RGB(255, 0, 0));
+    HBRUSH rect_brush = CreateSolidBrush(RGB(255, 0, 0)); // Закрасить красным
 
-    double level, scale;
-    double max_index, index;
-    double optimal_count_lines, optimal_discret;
-    std::vector<double> new_discrets;
+    current_pen = (HPEN)SelectObject(hdc, rect_pen);
+    current_brush = (HBRUSH)SelectObject(hdc, rect_brush);
 
-    new_discrets = discrets;
-    max_index = new_discrets.size() - 1;
-    level = ceil(log10(current_span)) - 1;
-    scale = pow(10, level);
+    Position2d test_point1 = ConvertToPixelCoords(20, 20);
+    Position2d test_point2 = ConvertToPixelCoords(30, 30);
 
-    for (int i = 0; i < new_discrets.size(); i++) new_discrets[i] *= scale;
+    Rectangle(hdc, test_point1.x, test_point1.y, test_point2.x, test_point2.y);
 
-    index = max_index;
-    optimal_discret = new_discrets[index];
+    SelectObject(hdc, current_pen);
+    SelectObject(hdc, current_brush);
+    DeleteObject(rect_pen);
+    DeleteObject(rect_brush);
 
-    while (1) {
-        optimal_count_lines = current_span / optimal_discret;
-
-        if ((optimal_count_lines >= current_minimal_count_lines)) break;
-
-        index--;
-        if (index < 0) {
-            index = max_index;
-            level--;
-            scale = pow(10, level);
-            new_discrets = discrets;
-            for (int i = 0; i < new_discrets.size(); i++) new_discrets[i] *= scale;
-        }
-
-        optimal_discret = new_discrets[index];
-    }
-
-    return optimal_discret;
-}
-
-Point2D AxesState::GetOptimalDiscret(Point2D span) {
-    return Point2D(
-        SearchOptimalDiscret(AxesSelection::xAxes, span),
-        SearchOptimalDiscret(AxesSelection::yAxes, span));
-}
-
-
-// DrawGraph realization ->
-
-void GraphState::DrawGraph(const HDC& hdc)
-{
-    Point2D optimal_discret = axesState.GetOptimalDiscret(area_span);
-
-    double x_min = tugboatState.reference_position.x;
-    double x_max = tugboatState.reference_position.x + area_span.x;
-    double y_min = tugboatState.reference_position.y;
-    double y_max = tugboatState.reference_position.y + area_span.y;
-
-    // Ограничиваем область рисования
-    int left = windowState.margin.left * windowState.size_compress.x;
-    int top = windowState.margin.top * windowState.size_compress.y;
-    int right = windowState.size_current.x - (windowState.margin.right * windowState.size_compress.x);
-    int bottom = windowState.size_current.y - (windowState.margin.bottom * windowState.size_compress.y);
-
-    RECT clipRect = { left, top, right, bottom };
-    HRGN clipRegion = CreateRectRgn(left, top, right, bottom);
-    SelectClipRgn(hdc, clipRegion);
-
-    HPEN gridPen = CreatePen(PS_SOLID, 1, RGB(100, 100, 100)); // Тёмно-серые линии
-    HPEN oldPen = (HPEN)SelectObject(hdc, gridPen);
-
-    SetTextColor(hdc, RGB(255, 255, 255));
-    SetBkMode(hdc, TRANSPARENT);
-
-    for (double x = std::floor(x_min / optimal_discret.x) * optimal_discret.x; x <= x_max; x += optimal_discret.x)
-    {
-        Point2D p1 = Abstruct2Pixel(x, y_min);
-        Point2D p2 = Abstruct2Pixel(x, y_max);
-        if (p1.x >= left && p1.x <= right) {
-            MoveToEx(hdc, p1.x, top, NULL);
-            LineTo(hdc, p2.x, bottom);
-        }
-    }
-
-    for (double y = std::floor(y_min / optimal_discret.y) * optimal_discret.y; y <= y_max; y += optimal_discret.y)
-    {
-        Point2D p1 = Abstruct2Pixel(x_min, y);
-        Point2D p2 = Abstruct2Pixel(x_max, y);
-        if (p1.y >= top && p1.y <= bottom) {
-            MoveToEx(hdc, left, p1.y, NULL);
-            LineTo(hdc, right, p2.y);
-        }
-    }
-
-    SelectObject(hdc, oldPen);
-    DeleteObject(gridPen);
-
-    Point2D p1 = Abstruct2Pixel(20, 20);
-    Point2D p2 = Abstruct2Pixel(30, 30);
-
-    Rectangle(hdc, p1.x, p1.y, p2.x, p2.y);
     SelectClipRgn(hdc, NULL);
-    DeleteObject(clipRegion);
-
-
-    HPEN refPen = CreatePen(PS_SOLID, 1, RGB(250, 250, 250));
-    HPEN newPen = (HPEN)SelectObject(hdc, refPen);
-
-    long xl = windowState.points_plot.left;
-    long yt = windowState.points_plot.top;
-    long xr = windowState.points_plot.right;
-    long yb = windowState.points_plot.bottom;
-
-    MoveToEx(hdc, xl, yb, NULL);
-    LineTo(hdc, xr, yb);
-    MoveToEx(hdc, xr, yb, NULL);
-    LineTo(hdc, xr, yt);
-    MoveToEx(hdc, xl, yt, NULL);
-    LineTo(hdc, xr, yt);
-    MoveToEx(hdc, xl, yb, NULL);
-    LineTo(hdc, xl, yt);
-
-    SelectObject(hdc, newPen);
-    DeleteObject(refPen);
+    DeleteObject(clip_region);
 }

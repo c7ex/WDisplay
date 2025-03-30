@@ -16,12 +16,12 @@
 // WindowManager.h (פנאדלוםע)
 class WindowManager {
 private:
-    HWND hwnd;
-    HINSTANCE hInstance;
-    std::wstring className;
-    HWND hStatusBar = NULL;
+    HWND hwnd_;
+    HINSTANCE hInstance_;
+    std::wstring className_;
+    HWND statusBar_ = NULL;
 
-    GraphState graphState;
+    GraphState graphState_;
 
 public:
     WindowManager(const std::wstring& className);
